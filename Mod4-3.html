@@ -416,10 +416,11 @@ const LIVE_CHANNELS = [
   {
     name: 'CazéTV',
     ytHandle: '@cazetv',
-    ytId: 'UCZiYbVptd3PVPf4f6eR6UaQ',
+    ytId: null,
+    externalUrl: 'https://www.youtube.com/@cazetv/streams',
     tag: '🇧🇷 البرازيل • بث مجاني مباشر',
     icon: '🟢',
-    desc: 'كأس العالم 2026 + الدوري الأوروبي + البوندسليغا مجاناً'
+    desc: 'كأس العالم 2026 + الدوري الأوروبي + البوندسليغا — يفتح يوتيوب مباشرة'
   },
 ];
 
@@ -523,19 +524,25 @@ function renderStars(){
 function renderLive(){
   el('page-live').innerHTML = sectionTitle('البث المباشر','قنوات رياضية غربية رسمية — تفتح مباشرة على يوتيوب، مع خيار Piped لتجاوز الحظر الجغرافي')+
     `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-6">`+
-    LIVE_CHANNELS.map((c,i)=>`
-      <div class="lift border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${i*40}ms;background:#121316;" onclick="openLiveChannel('${c.ytId}','${esc(c.name)}')">
+    LIVE_CHANNELS.map((c,i)=>{
+      const isExternal = !c.ytId;
+      const clickAction = isExternal
+        ? `window.open('${c.externalUrl}','_blank')`
+        : `openLiveChannel('${c.ytId}','${esc(c.name)}')`;
+      const badge = isExternal
+        ? `<span style="font-size:10px;font-weight:700;color:#FFC107;border:1px solid rgba(255,193,7,0.4);border-radius:4px;padding:2px 6px">↗ يفتح يوتيوب</span>`
+        : `<span style="font-size:10px;font-weight:700;color:#FF2244;border:1px solid rgba(255,34,68,0.4);border-radius:4px;padding:2px 6px;display:flex;align-items:center;gap:4px"><span class="live-dot"></span> يوتيوب</span><span style="font-size:10px;color:rgba(255,255,255,0.25)">+ Piped</span>`;
+      return `
+      <div class="lift border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${i*40}ms;background:#121316;" onclick="${clickAction}">
         <div class="flex items-center justify-between mb-3">
           <span style="font-size:22px">${c.icon}</span>
           <span style="font-size:10px;color:rgba(255,255,255,0.4);font-weight:700">${esc(c.tag)}</span>
         </div>
         <div style="font-family:'Changa',sans-serif;font-size:15px;font-weight:800;color:#fff;margin-bottom:4px;line-height:1.3">${esc(c.name)}</div>
         <div style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.5">${esc(c.desc)}</div>
-        <div style="margin-top:10px;display:flex;align-items:center;gap:6px">
-          <span style="font-size:10px;font-weight:700;color:#FF2244;border:1px solid rgba(255,34,68,0.4);border-radius:4px;padding:2px 6px;display:flex;align-items:center;gap:4px"><span class="live-dot"></span> يوتيوب</span>
-          <span style="font-size:10px;color:rgba(255,255,255,0.25)">+ Piped</span>
-        </div>
-      </div>`).join('')+`</div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:6px">${badge}</div>
+      </div>`;
+    }).join('')+`</div>
     <p style="color:rgba(255,255,255,0.25);font-size:11px;text-align:center;margin-top:8px"><i class="fa-solid fa-circle-info" style="margin-left:4px"></i> يفتح يوتيوب افتراضياً — اضغط "تجاوز الحظر" داخل المشغّل للتبديل لـ Piped</p>`;
 }
 
