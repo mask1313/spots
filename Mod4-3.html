@@ -310,6 +310,7 @@ const ICONS = {
 // تبويب المباريات محذوف
 const PAGES = [
   {id:'home',    ar:'الرئيسية',    icon:'fa-house'},
+  {id:'akhbar',  ar:'أخبار',       icon:'fa-bolt'},
   {id:'news',    ar:'الصحف',       icon:'fa-newspaper'},
   {id:'saudi',   ar:'دوري روشن',   icon:'fa-shield-halved'},
   {id:'world',   ar:'أندية العالم',icon:'fa-earth-americas'},
@@ -473,7 +474,216 @@ async function fetchJSON(url){
   return null;
 }
 
-/* ============ NAV / PAGES ============ */
+/* ============ RSS FEEDS للأخبار الداخلية ============ */
+const RSS_FEEDS = [
+  {name:'BBC Football',   flag:'🇬🇧', url:'https://feeds.bbci.co.uk/sport/football/rss.xml',              lang:'en'},
+  {name:'Sky Sports',     flag:'🇬🇧', url:'https://www.skysports.com/rss/12040',                           lang:'en'},
+  {name:'Goal',           flag:'🌍', url:'https://www.goal.com/feeds/en/news',                             lang:'en'},
+  {name:'Marca',          flag:'🇪🇸', url:'https://e00-marca.uecdn.es/rss/futbol/primera-division.xml',    lang:'es'},
+  {name:'AS',             flag:'🇪🇸', url:'https://as.com/rss/tags/ultimas_noticias.xml',                  lang:'es'},
+  {name:'كووورة',         flag:'🇸🇦', url:'https://www.kooora.com/?rss',                                   lang:'ar'},
+  {name:'فيلقوال',        flag:'🇪🇬', url:'https://www.filgoal.com/rss/',                                  lang:'ar'},
+  {name:'OneFootball',    flag:'🇩🇪', url:'https://onefootball.com/rss/news',                              lang:'en'},
+  {name:'L\'Équipe',      flag:'🇫🇷', url:'https://www.lequipe.fr/rss/actu_rss_Football.xml',             lang:'fr'},
+  {name:'Gazzetta',       flag:'🇮🇹', url:'https://www.gazzetta.it/rss/calcio.xml',                        lang:'it'},
+];
+
+/* مفتاح ترجمة Anthropic Claude عبر API */
+async function translateText(text, fromLang){
+  if(fromLang==='ar' || !text || text.length<5) return text;
+  try{
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:300,messages:[{role:'user',content:`ترجم هذا النص للعربية بشكل طبيعي بدون أي كلام زيادة:\n${text}`}]})
+    });
+    const d = await res.json();
+    return d?.content?.[0]?.text || text;
+  }catch(e){ return text; }
+}
+
+let _akhbarItems = [], _akhbarFilter = 'all', _akhbarLoaded = false;
+
+async function renderAkhbar(){
+  const sec = el('page-akhbar');
+  if(_akhbarLoaded){ _renderAkhbarList(); return; }
+
+  sec.innerHTML = `
+    ${sectionTitle('أخبار كرة القدم','مجمّعة من أبرز المصادر العالمية والعربية — مترجمة للعربية')}
+    <div id="akhbar-filters" class="flex gap-2 flex-wrap mb-5">
+      <button onclick="filterAkhbar('all')" id="af-all" class="af-btn active-af px-3 py-1.5 rounded-lg text-sm font-bold" style="background:#FF2244;color:#fff;border:none;cursor:pointer">الكل</button>
+      <button onclick="filterAkhbar('ar')"  id="af-ar"  class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,193,7,0.15);color:#FFC107;border:1px solid rgba(255,193,7,0.3);cursor:pointer">🇸🇦 عربي</button>
+      <button onclick="filterAkhbar('en')"  id="af-en"  class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);cursor:pointer">🇬🇧 إنجليزي</button>
+      <button onclick="filterAkhbar('es')"  id="af-es"  class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);cursor:pointer">🇪🇸 إسباني</button>
+    </div>
+    <div id="akhbar-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <div id="akhbar-loading" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:60px 0;color:rgba(255,255,255,0.4)">
+      <i class="fa-solid fa-futbol fa-spin" style="font-size:28px;color:#FF2244"></i>
+      <span style="font-size:14px">جاري تحميل الأخبار...</span>
+    </div>`;
+
+  // جلب RSS
+  const items = [];
+  for(const feed of RSS_FEEDS){
+    try{
+      const j = await fetchJSON(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&count=8`);
+      if(j?.status==='ok' && j.items){
+        j.items.forEach(it=>{
+          const img = it.thumbnail || it.enclosure?.link || it.media?.content?.url || '';
+          items.push({
+            title: (it.title||'').trim(),
+            desc: (it.description||'').replace(/<[^>]+>/g,'').trim().slice(0,180),
+            link: it.link||'#',
+            img: img,
+            date: it.pubDate||'',
+            source: feed.name,
+            flag: feed.flag,
+            lang: feed.lang,
+            titleAr: '',
+            descAr: '',
+          });
+        });
+      }
+    }catch(e){}
+  }
+
+  // ترتيب حسب التاريخ
+  _akhbarItems = items
+    .filter((v,i,a)=>a.findIndex(x=>x.title===v.title)===i)
+    .sort((a,b)=>new Date(b.date)-new Date(a.date))
+    .slice(0,60);
+
+  _akhbarLoaded = true;
+  el('akhbar-loading').style.display='none';
+  _renderAkhbarList();
+}
+
+function filterAkhbar(lang){
+  _akhbarFilter = lang;
+  document.querySelectorAll('.af-btn').forEach(b=>{
+    b.style.background = 'rgba(255,255,255,0.05)';
+    b.style.color = 'rgba(255,255,255,0.6)';
+    b.style.border = '1px solid rgba(255,255,255,0.1)';
+  });
+  const active = el('af-'+lang);
+  if(active){ active.style.background='#FF2244'; active.style.color='#fff'; active.style.border='none'; }
+  _renderAkhbarList();
+}
+
+function _renderAkhbarList(){
+  const list = el('akhbar-list'); if(!list) return;
+  const filtered = _akhbarFilter==='all' ? _akhbarItems : _akhbarItems.filter(it=>it.lang===_akhbarFilter);
+  if(!filtered.length){ list.innerHTML='<p style="color:rgba(255,255,255,0.3);text-align:center;padding:40px">لا توجد أخبار في هذا التصنيف</p>'; return; }
+
+  list.innerHTML = filtered.map((it,i)=>{
+    const timeAgo = _timeAgo(it.date);
+    const img = it.img ? `<div style="height:160px;overflow:hidden;border-radius:10px 10px 0 0"><img src="${esc(it.img)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display='none'" loading="lazy"/></div>` : '';
+    const titleShow = it.titleAr || it.title;
+    const descShow  = it.descAr  || it.desc;
+    const needsTr   = it.lang !== 'ar' && !it.titleAr;
+    return `
+    <div class="lift fade-up" style="animation-delay:${Math.min(i*30,400)}ms;background:#121316;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column" onclick="openAkhbarArticle(${i})">
+      ${img}
+      <div style="padding:12px;flex:1;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;color:#FF2244;background:rgba(255,34,68,0.1);border:1px solid rgba(255,34,68,0.2);border-radius:4px;padding:1px 6px">${it.flag} ${esc(it.source)}</span>
+          <span style="font-size:10px;color:rgba(255,255,255,0.3)">${timeAgo}</span>
+          ${needsTr?`<span id="tr-badge-${i}" style="font-size:10px;color:#5b9fff;cursor:pointer;margin-right:auto" onclick="event.stopPropagation();translateItem(${i})">⚡ ترجم</span>`:''}
+        </div>
+        <div id="title-${i}" style="font-family:'Changa',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1.4">${esc(titleShow)}</div>
+        <div id="desc-${i}" style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6;flex:1">${esc(descShow.slice(0,120))}${descShow.length>120?'...':''}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function translateItem(i){
+  const filtered = _akhbarFilter==='all' ? _akhbarItems : _akhbarItems.filter(it=>it.lang===_akhbarFilter);
+  const item = filtered[i]; if(!item) return;
+  const badge = el('tr-badge-'+i);
+  if(badge){ badge.textContent='⏳ جاري...'; }
+  // ترجمة بسيطة عبر MyMemory (مجاني بدون مفتاح)
+  try{
+    const tTitle = await _myMemoryTranslate(item.title, item.lang);
+    const tDesc  = await _myMemoryTranslate(item.desc,  item.lang);
+    item.titleAr = tTitle;
+    item.descAr  = tDesc;
+    const titleEl = el('title-'+i);
+    const descEl  = el('desc-'+i);
+    if(titleEl) titleEl.textContent = tTitle;
+    if(descEl)  descEl.textContent  = tDesc.slice(0,120)+(tDesc.length>120?'...':'');
+    if(badge){ badge.textContent='✓ مترجم'; badge.style.color='#4ade80'; }
+  }catch(e){
+    if(badge){ badge.textContent='خطأ'; }
+  }
+}
+
+async function _myMemoryTranslate(text, fromLang){
+  if(!text || fromLang==='ar') return text;
+  const langMap = {en:'en-US',es:'es-ES',fr:'fr-FR',it:'it-IT',de:'de-DE'};
+  const from = langMap[fromLang]||'en-US';
+  const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0,400))}&langpair=${from}|ar-SA`);
+  const d = await res.json();
+  return d?.responseData?.translatedText || text;
+}
+
+function openAkhbarArticle(i){
+  const filtered = _akhbarFilter==='all' ? _akhbarItems : _akhbarItems.filter(it=>it.lang===_akhbarFilter);
+  const item = filtered[i]; if(!item) return;
+  // افتح المقال في overlay داخلي
+  const title = item.titleAr || item.title;
+  const desc  = item.descAr  || item.desc;
+  const needsTr = item.lang!=='ar' && !item.titleAr;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'article-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9600;background:#0a0a0b;display:flex;flex-direction:column;font-family:Tajawal,sans-serif;overflow-y:auto';
+  overlay.innerHTML = `
+    <div style="position:sticky;top:0;display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0a0a0b;border-bottom:1px solid rgba(255,255,255,0.08);z-index:1">
+      <button onclick="document.getElementById('article-overlay').remove()" style="background:rgba(255,34,68,0.15);border:1px solid rgba(255,34,68,0.3);color:#FF2244;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0">✕</button>
+      <span style="font-size:12px;font-weight:700;color:#FF2244;flex:1">${item.flag} ${esc(item.source)}</span>
+      <a href="${esc(item.link)}" target="_blank" style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);color:#FFC107;padding:0 12px;height:36px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;text-decoration:none">↗ المصدر</a>
+    </div>
+    ${item.img?`<img src="${esc(item.img)}" style="width:100%;max-height:220px;object-fit:cover" onerror="this.style.display='none'"/>`:''}
+    <div style="padding:20px;max-width:720px;margin:0 auto;width:100%">
+      <div style="font-size:11px;color:rgba(255,255,255,0.3);margin-bottom:10px">${_timeAgo(item.date)}</div>
+      <h2 id="art-title" style="font-family:Changa,sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1.4;margin-bottom:14px">${esc(title)}</h2>
+      <p id="art-desc" style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.9">${esc(desc)}</p>
+      ${needsTr?`<button onclick="translateArticle(${i})" id="art-tr-btn" style="margin-top:20px;background:linear-gradient(135deg,#0057FF,#FF2244);color:#fff;border:none;border-radius:12px;padding:12px 24px;font-size:14px;font-weight:700;cursor:pointer;font-family:Tajawal,sans-serif;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-language"></i> ترجم المقال للعربية</button>`:''}
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);text-align:center">
+        <a href="${esc(item.link)}" target="_blank" style="color:rgba(255,255,255,0.4);font-size:12px;text-decoration:none">اقرأ المقال الكامل في المصدر الأصلي ↗</a>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
+
+async function translateArticle(i){
+  const filtered = _akhbarFilter==='all' ? _akhbarItems : _akhbarItems.filter(it=>it.lang===_akhbarFilter);
+  const item = filtered[i]; if(!item) return;
+  const btn = el('art-tr-btn');
+  if(btn){ btn.innerHTML='<i class="fa-solid fa-spinner fa-spin"></i> جاري الترجمة...'; btn.disabled=true; }
+  try{
+    const tTitle = await _myMemoryTranslate(item.title, item.lang);
+    const tDesc  = await _myMemoryTranslate(item.desc,  item.lang);
+    item.titleAr = tTitle; item.descAr = tDesc;
+    const tEl = el('art-title'); const dEl = el('art-desc');
+    if(tEl) tEl.textContent = tTitle;
+    if(dEl) dEl.textContent = tDesc;
+    if(btn){ btn.innerHTML='✓ تمت الترجمة'; btn.style.background='rgba(74,222,128,0.2)'; btn.style.color='#4ade80'; }
+  }catch(e){
+    if(btn){ btn.innerHTML='خطأ في الترجمة'; btn.disabled=false; }
+  }
+}
+
+function _timeAgo(dateStr){
+  if(!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const m=Math.floor(diff/60000), h=Math.floor(m/60), d=Math.floor(h/24);
+  if(d>0) return `منذ ${d} ${d===1?'يوم':'أيام'}`;
+  if(h>0) return `منذ ${h} ${h===1?'ساعة':'ساعات'}`;
+  if(m>0) return `منذ ${m} ${m===1?'دقيقة':'دقائق'}`;
+  return 'الآن';
+}
 function buildNav(){
   el('nav').innerHTML = PAGES.map(p=>`
     <button class="navbtn whitespace-nowrap px-4 py-2.5 rounded-xl font-changa font-bold text-sm text-white/60 flex items-center gap-2" data-page="${p.id}" onclick="showPage('${p.id}')">
@@ -488,6 +698,7 @@ function showPage(id){
   document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.page===id));
   el('page-'+id).style.display='block';
   window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='akhbar') renderAkhbar();
 }
 
 /* ============ RENDERERS ============ */
