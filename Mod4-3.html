@@ -468,10 +468,32 @@ function translateBrowser(){
 function isArabicKey(key){ return AR_KEYS.has(key); }
 function fav(url){ const d=domainOf(url); return d?`https://icons.duckduckgo.com/ip3/${d}.ico`:''; }
 function monogram(name){ return (name||'?').trim().charAt(0); }
-async function fetchJSON(url){
-  try{ const r=await fetch(url); if(r.ok) return await r.json(); }catch(e){}
-  try{ const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(url)); if(r.ok) return await r.json(); }catch(e){}
-  return null;
+async function _fetchRSS(feedUrl){
+  // محاولة 1: rss2json
+  try{
+    const r = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&count=8&api_key=`);
+    const d = await r.json();
+    if(d?.status==='ok' && d.items?.length) return d.items;
+  }catch(e){}
+  // محاولة 2: allorigins
+  try{
+    const r = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}`);
+    const d = await r.json();
+    if(d?.contents){
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(d.contents,'text/xml');
+      const items = [...xml.querySelectorAll('item')].slice(0,8).map(it=>({
+        title: it.querySelector('title')?.textContent||'',
+        description: it.querySelector('description')?.textContent||'',
+        link: it.querySelector('link')?.textContent||'#',
+        pubDate: it.querySelector('pubDate')?.textContent||'',
+        thumbnail: it.querySelector('enclosure')?.getAttribute('url')||
+                   it.querySelector('media\\:content,content')?.getAttribute('url')||''
+      }));
+      if(items.length) return items;
+    }
+  }catch(e){}
+  return [];
 }
 
 /* ============ RSS FEEDS للأخبار الداخلية ============ */
@@ -526,9 +548,8 @@ async function renderAkhbar(){
   const items = [];
   for(const feed of RSS_FEEDS){
     try{
-      const j = await fetchJSON(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&count=8`);
-      if(j?.status==='ok' && j.items){
-        j.items.forEach(it=>{
+      const items2 = await _fetchRSS(feed.url);
+      items2.forEach(it=>{
           const img = it.thumbnail || it.enclosure?.link || it.media?.content?.url || '';
           items.push({
             title: (it.title||'').trim(),
@@ -543,7 +564,6 @@ async function renderAkhbar(){
             descAr: '',
           });
         });
-      }
     }catch(e){}
   }
 
@@ -684,6 +704,13 @@ function _timeAgo(dateStr){
   if(m>0) return `منذ ${m} ${m===1?'دقيقة':'دقائق'}`;
   return 'الآن';
 }
+
+async function fetchJSON(url){
+  try{ const r=await fetch(url); if(r.ok) return await r.json(); }catch(e){}
+  try{ const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(url)); if(r.ok) return await r.json(); }catch(e){}
+  return null;
+}
+
 function buildNav(){
   el('nav').innerHTML = PAGES.map(p=>`
     <button class="navbtn whitespace-nowrap px-4 py-2.5 rounded-xl font-changa font-bold text-sm text-white/60 flex items-center gap-2" data-page="${p.id}" onclick="showPage('${p.id}')">
