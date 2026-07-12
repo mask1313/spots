@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>صحافة كرة القدم العالمية المترجمة</title>
+  <meta name="description" content="أحدث أخبار كرة القدم من كبرى الصحف العالمية مترجمة فورياً إلى العربية" />
+
+  <!-- Tailwind CSS (Play CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Fonts: Cairo + Tajawal -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            cairo: ['Cairo', 'sans-serif'],
+            tajawal: ['Tajawal', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      --accent: #e11d2a;         /* default: Marca red */
+      --accent-soft: rgba(225, 29, 42, 0.14);
+      --accent-glow: rgba(225, 29, 42, 0.45);
+    }
+    * { -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'Tajawal', 'Cairo', sans-serif;
+      background-color: #0a0e14;
+      color: #e6e9ef;
+      background-image:
+        radial-gradient(1000px 600px at 85% -10%, var(--accent-soft), transparent 60%),
+        radial-gradient(900px 500px at -10% 10%, rgba(56,189,248,0.06), transparent 55%);
+      background-attachment: fixed;
+      min-height: 100vh;
+    }
+    h1, h2, h3, .font-head { font-family: 'Cairo', sans-serif; }
+
+    /* Pitch grain / noise overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0.035;
+      z-index: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    ::-webkit-scrollbar { width: 10px; height: 10px; }
+    ::-webkit-scrollbar-track { background: #0a0e14; }
+    ::-webkit-scrollbar-thumb { background: #2a323f; border-radius: 8px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+    ::selection { background: var(--accent); color: #fff; }
+
+    .glass {
+      background: rgba(19, 25, 34, 0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .card {
+      background: rgba(17, 22, 31, 0.9);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s ease, border-color .35s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: "";
+      position: absolute;
+      inset-inline-start: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--accent);
+      opacity: .85;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: var(--accent-glow);
+      box-shadow: 0 18px 40px -18px var(--accent-glow);
+    }
+
+    .tab-btn { transition: all .28s ease; position: relative; }
+    .tab-btn.active { color: #fff; }
+    .tab-btn.active .tab-dot { transform: scaleX(1); }
+    .tab-dot {
+      position: absolute;
+      bottom: -2px;
+      inset-inline: 0;
+      height: 3px;
+      background: var(--accent);
+      border-radius: 99px;
+      transform: scaleX(0);
+      transition: transform .3s ease;
+    }
+
+    .accent-btn { background: var(--accent); box-shadow: 0 8px 24px -10px var(--accent-glow); }
+    .accent-text { color: var(--accent); }
+
+    .shimmer {
+      background: linear-gradient(100deg, #131922 30%, #1c2432 50%, #131922 70%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    @keyframes shimmer { to { background-position: -200% 0; } }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+    .fade-up { animation: fadeUp .5s cubic-bezier(.2,.8,.2,1) both; }
+
+    .spin { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .line-clamp-3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+
+    .toast-in { animation: toastIn .3s ease both; }
+    @keyframes toastIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+  </style>
+</head>
+
+<body class="font-tajawal antialiased relative">
+  <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+
+    <!-- Header -->
+    <header class="pt-8 pb-4">
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-3">
+          <div class="w-12 h-12 rounded-2xl accent-btn flex items-center justify-center text-white text-2xl shrink-0">
+            <i class="fa-solid fa-futbol"></i>
+          </div>
+          <div>
+            <h1 class="font-head text-2xl sm:text-3xl font-900 font-extrabold leading-tight text-white">
+              صحافة كرة القدم <span class="accent-text">العالمية</span>
+            </h1>
+            <p class="text-xs sm:text-sm text-slate-400 mt-0.5">أحدث الأخبار مترجمة فورياً إلى العربية</p>
+          </div>
+        </div>
+
+        <button
+          id="bookmarksToggle"
+          data-testid="bookmarks-toggle-btn"
+          class="glass rounded-2xl px-4 py-2.5 flex items-center gap-2 text-sm font-bold hover:border-white/20 transition"
+        >
+          <i class="fa-solid fa-bookmark accent-text"></i>
+          <span>المفضلة</span>
+          <span id="bookmarkCount" data-testid="bookmark-count" class="bg-white/10 rounded-full px-2 py-0.5 text-xs">0</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Newspaper Tabs -->
+    <nav class="mt-4">
+      <div id="tabs" data-testid="newspaper-tabs" class="glass rounded-2xl p-2 flex items-center gap-1 overflow-x-auto"></div>
+    </nav>
+
+    <!-- Search -->
+    <div class="mt-5 relative">
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute top-1/2 -translate-y-1/2 right-4 text-slate-500"></i>
+        <input
+          id="searchInput"
+          data-testid="search-input"
+          type="text"
+          placeholder="ابحث بالعربية: ريال مدريد، ميسي، الهلال..."
+          class="w-full glass rounded-2xl py-3.5 pr-12 pl-4 text-base text-white placeholder-slate-500 outline-none focus:border-white/20 transition"
+        />
+        <button
+          id="clearSearch"
+          data-testid="clear-search-btn"
+          class="hidden absolute top-1/2 -translate-y-1/2 left-4 text-slate-400 hover:text-white transition"
+        >
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Status bar -->
+    <div class="mt-4 flex items-center justify-between text-xs text-slate-400">
+      <div id="statusText" data-testid="status-text" class="flex items-center gap-2"></div>
+      <button id="refreshBtn" data-testid="refresh-btn" class="flex items-center gap-1.5 hover:text-white transition">
+        <i class="fa-solid fa-rotate-right"></i> تحديث
+      </button>
+    </div>
+
+    <!-- Content grid -->
+    <main id="grid" data-testid="news-grid" class="mt-5 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></main>
+
+    <!-- Empty state -->
+    <div id="emptyState" data-testid="empty-state" class="hidden text-center py-24">
+      <div class="text-6xl text-slate-700 mb-4"><i class="fa-regular fa-newspaper"></i></div>
+      <p id="emptyText" class="text-slate-400 text-lg">لا توجد أخبار مطابقة.</p>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastWrap" class="fixed bottom-6 inset-x-0 flex flex-col items-center gap-2 z-50 pointer-events-none"></div>
+
+  <script>
+    // ---------- Configuration ----------
+    const SOURCES = [
+      {
+        id: 'marca', name: 'ماركا', country: 'إسبانيا', flag: '🇪🇸', lang: 'es',
+        accent: '#e11d2a', rss: 'https://e00-marca.uecdn.es/rss/futbol/primera-division.xml',
+      },
+      {
+        id: 'lequipe', name: 'ليكيب', country: 'فرنسا', flag: '🇫🇷', lang: 'fr',
+        accent: '#2563eb', rss: 'https://dwh.lequipe.fr/api/edito/rss?path=/Football/',
+      },
+      {
+        id: 'gazzetta', name: 'غازيتا', country: 'إيطاليا', flag: '🇮🇹', lang: 'it',
+        accent: '#ec4899', rss: 'https://gazzetta.it/rss/home.xml',
+      },
+      {
+        id: 'skysports', name: 'سكاي سبورتس', country: 'إنجلترا', flag: '🏴󠁧󠁢󠁥󠁮󠁧󠁿', lang: 'en',
+        accent: '#14b8a6', rss: 'https://www.skysports.com/rss/11095',
+      },
+    ];
+
+    const RSS2JSON = 'https://api.rss2json.com/v1/api.json?rss_url=';
+    const MYMEMORY = 'https://api.mymemory.translated.net/get';
+
+    // ---------- State ----------
+    let activeSource = SOURCES[0];
+    let currentArticles = [];      // {id, sourceId, origTitle, arTitle, origDesc, arDesc, link, pubDate}
+    let bookmarks = loadBookmarks();
+    let showingBookmarks = false;
+    let searchQuery = '';
+    const translationCache = loadCache();
+
+    // ---------- LocalStorage helpers ----------
+    function loadBookmarks() {
+      try { return JSON.parse(localStorage.getItem('gfpt_bookmarks') || '[]'); } catch { return []; }
+    }
+    function saveBookmarks() { localStorage.setItem('gfpt_bookmarks', JSON.stringify(bookmarks)); }
+    function loadCache() {
+      try { return JSON.parse(localStorage.getItem('gfpt_tcache') || '{}'); } catch { return {}; }
+    }
+    function saveCache() {
+      try { localStorage.setItem('gfpt_tcache', JSON.stringify(translationCache)); } catch {}
+    }
+
+    // ---------- Utils ----------
+    function setAccent(hex) {
+      const rgb = hexToRgb(hex);
+      document.documentElement.style.setProperty('--accent', hex);
+      document.documentElement.style.setProperty('--accent-soft', `rgba(${rgb},0.14)`);
+      document.documentElement.style.setProperty('--accent-glow', `rgba(${rgb},0.45)`);
+    }
+    function hexToRgb(hex) {
+      const n = parseInt(hex.replace('#', ''), 16);
+      return `${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}`;
+    }
+    function stripHtml(html) {
+      const d = document.createElement('div');
+      d.innerHTML = html || '';
+      return (d.textContent || d.innerText || '').replace(/\s+/g, ' ').trim();
+    }
+    function escapeHtml(s) {
+      return (s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    function timeAgo(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return '';
+      const diff = (Date.now() - d.getTime()) / 1000;
+      if (diff < 60) return 'الآن';
+      if (diff < 3600) return `منذ ${Math.floor(diff / 60)} دقيقة`;
+      if (diff < 86400) return `منذ ${Math.floor(diff / 3600)} ساعة`;
+      return `منذ ${Math.floor(diff / 86400)} يوم`;
+    }
+    function articleKey(a) { return a.link || (a.sourceId + '|' + a.origTitle); }
+
+    // ---------- Toast ----------
+    function toast(msg, icon = 'fa-check') {
+      const el = document.createElement('div');
+      el.className = 'toast-in pointer-events-auto glass rounded-xl px-5 py-3 flex items-center gap-2 text-sm font-bold text-white shadow-2xl';
+      el.style.borderColor = 'var(--accent-glow)';
+      el.innerHTML = `<i class="fa-solid ${icon} accent-text"></i><span>${escapeHtml(msg)}</span>`;
+      document.getElementById('toastWrap').appendChild(el);
+      setTimeout(() => { el.style.transition = 'opacity .3s, transform .3s'; el.style.opacity = '0'; el.style.transform = 'translateY(10px)'; }, 2200);
+      setTimeout(() => el.remove(), 2600);
+    }
+
+    // ---------- Translation (MyMemory) ----------
+    async function translateText(text, from) {
+      const clean = (text || '').trim();
+      if (!clean) return '';
+      const key = from + '::' + clean;
+      if (translationCache[key]) return translationCache[key];
+      // MyMemory limit ~500 bytes per q
+      const q = clean.slice(0, 480);
+      try {
+        const url = `${MYMEMORY}?q=${encodeURIComponent(q)}&langpair=${from}|ar&de=football@translate.app`;
+        const res = await fetch(url);
+        const data = await res.json();
+        let translated = data && data.responseData ? data.responseData.translatedText : '';
+        // MyMemory sometimes returns warning strings; guard against them
+        if (!translated || /MYMEMORY WARNING|QUERY LENGTH LIMIT|INVALID/i.test(translated)) {
+          translated = clean;
+        }
+        translated = stripHtml(translated);
+        translationCache[key] = translated;
+        return translated;
+      } catch {
+        return clean;
+      }
+    }
+
+    // Limit concurrency to be gentle on the free API
+    async function runPool(items, worker, concurrency = 4) {
+      const results = new Array(items.length);
+      let i = 0;
+      async function next() {
+        while (i < items.length) {
+          const idx = i++;
+          results[idx] = await worker(items[idx], idx);
+        }
+      }
+      await Promise.all(Array.from({ length: Math.min(concurrency, items.length) }, next));
+      return results;
+    }
+
+    // ---------- Fetch feed ----------
+    async function fetchFeed(source) {
+      const url = RSS2JSON + encodeURIComponent(source.rss);
+      const res = await fetch(url);
+      const data = await res.json();
+      if (data.status !== 'ok' || !Array.isArray(data.items)) {
+        throw new Error(data.message || 'تعذر جلب الأخبار');
+      }
+      return data.items.map(it => ({
+        sourceId: source.id,
+        origTitle: stripHtml(it.title),
+        origDesc: stripHtml(it.description).slice(0, 220),
+        link: it.link,
+        pubDate: it.pubDate,
+        arTitle: '',
+        arDesc: '',
+      })).filter(a => a.origTitle);
+    }
+
+    // ---------- Rendering ----------
+    function renderTabs() {
+      const wrap = document.getElementById('tabs');
+      wrap.innerHTML = SOURCES.map(s => `
+        <button
+          class="tab-btn ${s.id === activeSource.id && !showingBookmarks ? 'active' : 'text-slate-400 hover:text-white'} whitespace-nowrap px-4 py-2.5 rounded-xl font-head font-bold text-sm flex items-center gap-2"
+          data-source="${s.id}"
+          data-testid="tab-${s.id}"
+        >
+          <span class="text-base">${s.flag}</span>
+          <span>${s.name}</span>
+          <span class="tab-dot" style="background:${s.accent}"></span>
+        </button>
+      `).join('');
+      wrap.querySelectorAll('button').forEach(btn => {
+        btn.addEventListener('click', () => selectSource(btn.dataset.source));
+      });
+    }
+
+    function skeletonCards(n = 6) {
+      return Array.from({ length: n }).map(() => `
+        <div class="card rounded-2xl p-5">
+          <div class="flex items-center gap-2 mb-4">
+            <div class="shimmer h-5 w-20 rounded-full"></div>
+            <div class="shimmer h-4 w-14 rounded-full"></div>
+          </div>
+          <div class="shimmer h-5 w-full rounded mb-2"></div>
+          <div class="shimmer h-5 w-4/5 rounded mb-4"></div>
+          <div class="shimmer h-3 w-full rounded mb-1.5"></div>
+          <div class="shimmer h-3 w-2/3 rounded"></div>
+        </div>
+      `).join('');
+    }
+
+    function articleCard(a, index) {
+      const source = SOURCES.find(s => s.id === a.sourceId) || activeSource;
+      const key = articleKey(a);
+      const isBooked = bookmarks.some(b => articleKey(b) === key);
+      const desc = a.arDesc || a.origDesc || '';
+      return `
+        <article class="card rounded-2xl p-5 flex flex-col fade-up" style="--accent:${source.accent};--accent-glow:${'rgba(' + hexToRgb(source.accent) + ',0.45)'};animation-delay:${Math.min(index * 45, 400)}ms" data-testid="article-card">
+          <div class="flex items-center justify-between gap-2 mb-3">
+            <span class="text-xs font-bold px-2.5 py-1 rounded-full flex items-center gap-1" style="background:rgba(${hexToRgb(source.accent)},0.16);color:${source.accent}">
+              ${source.flag} ${source.name}
+            </span>
+            <span class="text-[11px] text-slate-500">${timeAgo(a.pubDate)}</span>
+          </div>
+
+          <h3 class="font-head font-bold text-lg leading-snug text-white line-clamp-3 mb-2" data-testid="article-title">
+            ${escapeHtml(a.arTitle || a.origTitle)}
+          </h3>
+          ${desc ? `<p class="text-sm text-slate-400 line-clamp-2 mb-3">${escapeHtml(desc)}</p>` : ''}
+
+          <p class="text-[11px] text-slate-600 line-clamp-2 mb-4 border-r-2 border-white/10 pr-2" dir="ltr">${escapeHtml(a.origTitle)}</p>
+
+          <div class="mt-auto flex items-center gap-2">
+            <a href="${escapeHtml(a.link)}" target="_blank" rel="noopener"
+               class="accent-btn text-white text-sm font-bold rounded-xl px-3.5 py-2 flex items-center gap-1.5 hover:brightness-110 transition"
+               data-testid="read-original-btn">
+              <i class="fa-solid fa-up-right-from-square text-xs"></i> المصدر
+            </a>
+            <button class="bookmark-btn glass rounded-xl w-10 h-10 flex items-center justify-center hover:border-white/20 transition ${isBooked ? 'accent-text' : 'text-slate-400'}"
+                    data-key="${escapeHtml(key)}" data-testid="bookmark-btn" title="حفظ">
+              <i class="fa-${isBooked ? 'solid' : 'regular'} fa-bookmark"></i>
+            </button>
+            <button class="share-btn glass rounded-xl w-10 h-10 flex items-center justify-center text-slate-400 hover:border-white/20 hover:text-white transition"
+                    data-key="${escapeHtml(key)}" data-testid="share-btn" title="مشاركة">
+              <i class="fa-solid fa-share-nodes"></i>
+            </button>
+          </div>
+        </article>
+      `;
+    }
+
+    function getVisibleArticles() {
+      let list = showingBookmarks ? bookmarks.slice() : currentArticles.slice();
+      const q = searchQuery.trim().toLowerCase();
+      if (q) {
+        list = list.filter(a =>
+          (a.arTitle || '').toLowerCase().includes(q) ||
+          (a.origTitle || '').toLowerCase().includes(q) ||
+          (a.arDesc || '').toLowerCase().includes(q) ||
+          (a.origDesc || '').toLowerCase().includes(q)
+        );
+      }
+      return list;
+    }
+
+    function renderArticles() {
+      const grid = document.getElementById('grid');
+      const empty = document.getElementById('emptyState');
+      const list = getVisibleArticles();
+      if (list.length === 0) {
+        grid.innerHTML = '';
+        empty.classList.remove('hidden');
+        document.getElementById('emptyText').textContent = showingBookmarks
+          ? 'لم تقم بحفظ أي خبر بعد.'
+          : (searchQuery ? 'لا توجد أخبار مطابقة لبحثك.' : 'لا توجد أخبار متاحة حالياً.');
+      } else {
+        empty.classList.add('hidden');
+        grid.innerHTML = list.map((a, i) => articleCard(a, i)).join('');
+        attachCardEvents();
+      }
+    }
+
+    function attachCardEvents() {
+      document.querySelectorAll('.bookmark-btn').forEach(btn => {
+        btn.addEventListener('click', () => toggleBookmark(btn.dataset.key));
+      });
+      document.querySelectorAll('.share-btn').forEach(btn => {
+        btn.addEventListener('click', () => shareArticle(btn.dataset.key));
+      });
+    }
+
+    function findArticle(key) {
+      return currentArticles.find(a => articleKey(a) === key)
+          || bookmarks.find(a => articleKey(a) === key);
+    }
+
+    function toggleBookmark(key) {
+      const idx = bookmarks.findIndex(b => articleKey(b) === key);
+      if (idx >= 0) {
+        bookmarks.splice(idx, 1);
+        toast('تمت الإزالة من المفضلة', 'fa-bookmark');
+      } else {
+        const a = findArticle(key);
+        if (a) {
+          bookmarks.unshift(a);
+          toast('تم الحفظ في المفضلة', 'fa-bookmark');
+        }
+      }
+      saveBookmarks();
+      updateBookmarkCount();
+      renderArticles();
+    }
+
+    async function shareArticle(key) {
+      const a = findArticle(key);
+      if (!a) return;
+      const source = SOURCES.find(s => s.id === a.sourceId) || activeSource;
+      const msg = `📰 خبر مترجم من صحيفة ${source.name} (${source.country})\n\n${a.arTitle || a.origTitle}\n\n🔗 ${a.link}\n\n— عبر تطبيق صحافة كرة القدم العالمية المترجمة`;
+      try {
+        if (navigator.share) {
+          await navigator.share({ text: msg, url: a.link });
+        } else {
+          await navigator.clipboard.writeText(msg);
+          toast('تم نسخ الخبر للحافظة', 'fa-copy');
+        }
+      } catch {
+        try { await navigator.clipboard.writeText(msg); toast('تم نسخ الخبر للحافظة', 'fa-copy'); }
+        catch { toast('تعذّرت المشاركة', 'fa-triangle-exclamation'); }
+      }
+    }
+
+    function updateBookmarkCount() {
+      document.getElementById('bookmarkCount').textContent = bookmarks.length;
+    }
+
+    function setStatus(html) {
+      document.getElementById('statusText').innerHTML = html;
+    }
+
+    // ---------- Main load flow ----------
+    async function loadSource(source) {
+      showingBookmarks = false;
+      activeSource = source;
+      setAccent(source.accent);
+      renderTabs();
+      searchQuery = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearch').classList.add('hidden');
+
+      // Skeleton
+      document.getElementById('emptyState').classList.add('hidden');
+      document.getElementById('grid').innerHTML = skeletonCards(6);
+      setStatus(`<i class="fa-solid fa-satellite-dish accent-text"></i> جاري جلب أخبار ${source.name}...`);
+
+      try {
+        currentArticles = await fetchFeed(source);
+        setStatus(`<span class="spin inline-block"><i class="fa-solid fa-language accent-text"></i></span> جاري الترجمة الفورية (${currentArticles.length} خبر)...`);
+
+        // Translate titles + short descriptions
+        await runPool(currentArticles, async (a) => {
+          a.arTitle = await translateText(a.origTitle, source.lang);
+          if (a.origDesc) a.arDesc = await translateText(a.origDesc, source.lang);
+          return a;
+        }, 4);
+
+        saveCache();
+        setStatus(`<i class="fa-solid fa-circle-check text-emerald-400"></i> ${currentArticles.length} خبر مترجم من ${source.flag} ${source.name}`);
+        renderArticles();
+      } catch (err) {
+        currentArticles = [];
+        document.getElementById('grid').innerHTML = '';
+        document.getElementById('emptyState').classList.remove('hidden');
+        document.getElementById('emptyText').textContent = 'تعذّر جلب الأخبار. حاول التحديث لاحقاً.';
+        setStatus(`<i class="fa-solid fa-triangle-exclamation text-amber-400"></i> خطأ في الاتصال`);
+      }
+    }
+
+    function selectSource(id) {
+      const s = SOURCES.find(x => x.id === id);
+      if (s) loadSource(s);
+    }
+
+    function showBookmarks() {
+      showingBookmarks = true;
+      searchQuery = '';
+      document.getElementById('searchInput').value = '';
+      document.getElementById('clearSearch').classList.add('hidden');
+      renderTabs();
+      setStatus(`<i class="fa-solid fa-bookmark accent-text"></i> المفضلة (${bookmarks.length} خبر محفوظ)`);
+      renderArticles();
+    }
+
+    // ---------- Events ----------
+    const searchInput = document.getElementById('searchInput');
+    const clearBtn = document.getElementById('clearSearch');
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value;
+      clearBtn.classList.toggle('hidden', !searchQuery);
+      renderArticles();
+    });
+    clearBtn.addEventListener('click', () => {
+      searchQuery = '';
+      searchInput.value = '';
+      clearBtn.classList.add('hidden');
+      renderArticles();
+    });
+
+    document.getElementById('refreshBtn').addEventListener('click', () => {
+      if (showingBookmarks) showBookmarks();
+      else loadSource(activeSource);
+    });
+
+    document.getElementById('bookmarksToggle').addEventListener('click', () => {
+      if (showingBookmarks) loadSource(activeSource);
+      else showBookmarks();
+    });
+
+    // ---------- Init ----------
+    renderTabs();
+    updateBookmarkCount();
+    loadSource(activeSource);
+  </script>
+</body>
+</html>
