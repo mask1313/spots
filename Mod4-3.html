@@ -138,13 +138,6 @@
         <div id="tb-time" class="font-changa text-xl font-bold leading-none">--:--</div>
         <div id="tb-date" class="text-[10px] text-white/50 mt-1">—</div>
       </div>
-      <div class="glass rounded-xl px-4 py-2 border border-white/10 flex items-center gap-2">
-        <span id="w-icon" class="text-2xl">📍</span>
-        <div class="leading-none">
-          <div id="w-deg" class="font-changa text-lg font-bold">--°</div>
-          <div id="w-city" class="text-[10px] text-white/50 mt-1">الطقس</div>
-        </div>
-      </div>
     </div>
   </header>
 
@@ -1127,17 +1120,14 @@ function renderLive(){
 /* ============ HOME (hero + news slider) ============ */
 function renderHomeShell(){
   el('page-home').innerHTML = `
-    <div class="relative rounded-3xl overflow-hidden border border-white/10 mb-8" style="min-height:280px">
-      <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1679391029864-d46f366a456b?w=1400&q=80&auto=format&fit=crop')"></div>
-      <div class="absolute inset-0" style="background:linear-gradient(90deg,#0A0A0B 8%,rgba(10,10,11,.7) 45%,rgba(10,10,11,.25))"></div>
-      <div class="relative z-10 p-8 sm:p-12 max-w-xl">
-        <div class="inline-flex items-center gap-2 text-live font-changa font-bold text-xs border border-live/50 rounded-full px-3 py-1 mb-4"><span class="live-dot"></span> بث حي • كرة القدم</div>
-        <h2 class="font-changa text-4xl sm:text-6xl font-extrabold leading-none mb-3">أستوديو<br/><span class="text-gold">كرة القدم</span></h2>
-        <p class="text-white/70 mb-6 text-sm sm:text-base">أخبار لحظية، صحف عالمية مترجمة، أندية ونجوم، ونتائج مباشرة — كل ما يخص كرة القدم في مكان واحد.</p>
-        <div class="flex gap-3">
-          <button onclick="showPage('matches')" class="bg-live hover:brightness-110 transition text-white font-changa font-bold rounded-xl px-5 py-3 flex items-center gap-2" data-testid="hero-matches-btn"><i class="fa-solid fa-futbol"></i> النتائج والمواعيد</button>
-          <button onclick="showPage('news')" class="glass border border-white/15 hover:border-white/30 transition font-changa font-bold rounded-xl px-5 py-3 flex items-center gap-2"><i class="fa-solid fa-newspaper"></i> الصحف</button>
-        </div>
+    <div class="relative rounded-2xl overflow-hidden border border-white/10 mb-6 flex items-center justify-between gap-4 flex-wrap px-5 py-4" style="background:linear-gradient(90deg,#141416,#0f0f11)">
+      <div class="flex items-center gap-3">
+        <span class="inline-flex items-center gap-2 text-live font-changa font-bold text-xs border border-live/50 rounded-full px-3 py-1"><span class="live-dot"></span> بث حي</span>
+        <h2 class="font-changa text-xl sm:text-2xl font-extrabold">أستوديو <span class="text-gold">كرة القدم</span></h2>
+      </div>
+      <div class="flex gap-2">
+        <button onclick="showPage('matches')" class="bg-live hover:brightness-110 transition text-white font-changa font-bold rounded-lg px-4 py-2 text-sm flex items-center gap-2" data-testid="hero-matches-btn"><i class="fa-solid fa-futbol"></i> النتائج والمواعيد</button>
+        <button onclick="showPage('news')" class="glass border border-white/15 hover:border-white/30 transition font-changa font-bold rounded-lg px-4 py-2 text-sm flex items-center gap-2"><i class="fa-solid fa-newspaper"></i> الصحف</button>
       </div>
     </div>
 
@@ -1287,18 +1277,19 @@ async function initNewsSlider(){
   const track=el('ns-track'), dots=el('ns-dots');
   let items=[];
   const feeds=[
-    {rss:'https://arabic.sport360.com/feed', name:'سبورت 360'},
     {rss:'https://www.aljazeera.net/aljazeerarss/sports', name:'الجزيرة رياضة'},
     {rss:'https://e00-marca.uecdn.es/rss/futbol/primera-division.xml', name:'ماركا'},
+    {rss:'https://feeds.bbci.co.uk/sport/football/rss.xml', name:'BBC Football'},
+    {rss:'https://www.skysports.com/rss/11095', name:'Sky Sports'},
   ];
   try{
     for(const f of feeds){
       const j=await fetchJSON(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.rss)}`);
-      if(j && j.status==='ok' && j.items){ j.items.forEach(it=>{ const t=(it.title||'').trim(); if(t.length>8) items.push({t, s:f.name, l:it.link||'#', img:it.thumbnail||it.enclosure?.link||null}); }); }
-      if(items.length>=10) break;
+      if(j && j.status==='ok' && j.items){ j.items.forEach(it=>{ const t=(it.title||'').trim(); if(t.length>8) items.push({t, s:f.name, l:it.link||'#', img:it.thumbnail||it.enclosure?.link||null, d:Date.parse(it.pubDate||'')||0}); }); }
     }
   }catch(e){}
-  items = items.filter((v,i,a)=>a.findIndex(x=>x.t===v.t)===i).slice(0,10);
+  // إزالة التكرار + ترتيب حسب الأحدث
+  items = items.filter((v,i,a)=>a.findIndex(x=>x.t===v.t)===i).sort((a,b)=>b.d-a.d).slice(0,14);
   if(!items.length) items=STATIC_NEWS.slice();
   items = items.map((it,i)=>({...it, img: it.img || STATIC_NEWS[i%STATIC_NEWS.length].img}));
 
@@ -1325,7 +1316,7 @@ async function initNewsSlider(){
   el('ticker-move').innerHTML = tickerItems + tickerItems; // duplicate for seamless loop
 }
 
-/* ============ CLOCK + WEATHER ============ */
+/* ============ CLOCK ============ */
 function updateClock(){
   const now=new Date();
   const h=String(now.getHours()).padStart(2,'0'), m=String(now.getMinutes()).padStart(2,'0');
@@ -1333,17 +1324,6 @@ function updateClock(){
   const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
   el('tb-time').textContent=`${h}:${m}`;
   el('tb-date').textContent=`${days[now.getDay()]}، ${now.getDate()} ${months[now.getMonth()]}`;
-}
-const wIcons={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'❄️',73:'❄️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
-async function loadWeather(){
-  try{
-    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:6000}));
-    const {latitude:lat,longitude:lon}=pos.coords;
-    const w=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`)).json();
-    el('w-icon').textContent=wIcons[w.current_weather.weathercode]||'🌡️';
-    el('w-deg').textContent=`${Math.round(w.current_weather.temperature)}°`;
-    try{ const g=await (await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ar`)).json(); el('w-city').textContent=g.address?.city||g.address?.town||g.address?.state||'موقعك'; }catch{ el('w-city').textContent='موقعك'; }
-  }catch(e){ el('w-icon').textContent='📍'; el('w-deg').textContent='--°'; el('w-city').textContent='الطقس'; }
 }
 
 /* ============ INIT ============ */
@@ -1356,7 +1336,6 @@ renderLive();
 showPage('home');
 initNewsSlider();
 updateClock(); setInterval(updateClock,1000);
-loadWeather();
 </script>
 </body>
 </html>
