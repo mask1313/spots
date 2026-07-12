@@ -1,0 +1,126 @@
+{
+  "theme": "Broadcast TV / Sports Studio",
+  "direction": "أستوديو بث رياضي - High-end football TV broadcast graphics package.",
+  "typography": {
+    "fonts": {
+      "primary": "'Changa', sans-serif",
+      "secondary": "'Tajawal', sans-serif"
+    },
+    "google_fonts_import": "@import url('https://fonts.googleapis.com/css2?family=Changa:wght@400;700;800&family=Tajawal:wght@400;500;700&display=swap');",
+    "scale": {
+      "h1": "text-5xl md:text-7xl font-black uppercase tracking-tight",
+      "h2": "text-4xl md:text-5xl font-bold",
+      "h3": "text-2xl md:text-3xl font-bold",
+      "ticker": "text-xl font-bold tracking-wide",
+      "body": "text-base font-normal",
+      "labels": "text-xs font-bold uppercase tracking-widest"
+    },
+    "rules": "Use Changa for all heavy headers, scoreboards, and the news ticker to give that squared, masculine, broadcast-sports feel. Use Tajawal for readable UI elements, menus, and paragraphs."
+  },
+  "colors": {
+    "background": {
+      "base": "#0A0A0B",
+      "surface": "#121316",
+      "surface_elevated": "#1A1C20"
+    },
+    "accents": {
+      "live_red": "#FF2244",
+      "broadcast_gold": "#FFC107",
+      "electric_blue": "#0057FF"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#9CA3AF",
+      "tertiary": "#6B7280"
+    },
+    "borders": {
+      "subtle": "#272A30",
+      "active": "#FF2244"
+    },
+    "rules": "Avoid AI-slop purple gradients. Stick to strict broadcast aesthetics: solid blacks/obsidians, stark whites, and hyper-visible solid red (#FF2244) for LIVE accents."
+  },
+  "layouts": {
+    "general": "RTL (Right-to-Left) first. Use 'dir=rtl' on the root HTML. Grid-heavy, dense, and compartmentalized like a TV studio monitor wall.",
+    "hero_scoreboard": "A prominent scoreboard spanning full width, imitating a live TV scorebug. Minimalist, high contrast, avoiding muddy 3D gradients in favor of sharp flat colors or extremely subtle 1px glass borders.",
+    "news_ticker": "Fixed at the bottom of the viewport or just below the header. Must span 100% width, black background with bold red 'مباشر' (LIVE) badge on the right, and continuous scrolling text to the left.",
+    "bento_grids": "For Newspapers and Clubs. Use 1px borders (border-white/10) with solid surface backgrounds, hover effects that lift the card and add a subtle glow.",
+    "player_cards": "Magazine-style. Tall cards. Background is a dark stadium image or solid dark color, with player cutout breaking out of the top/bottom frame slightly. Giant typography of the player's number or name behind the cutout."
+  },
+  "components": {
+    "news_ticker": {
+      "wrapper": "fixed bottom-0 w-full h-12 bg-black border-t border-white/10 flex items-center overflow-hidden z-50",
+      "live_badge": "bg-[#FF2244] text-white px-6 h-full flex items-center font-bold text-lg z-10 shadow-[0_0_15px_rgba(255,34,68,0.5)]",
+      "scroll_track": "flex-1 overflow-hidden relative h-full flex items-center",
+      "scroll_text": "whitespace-nowrap animate-marquee text-white/90 font-changa text-lg mx-4"
+    },
+    "club_card": {
+      "wrapper": "relative group flex flex-col items-center justify-center p-6 bg-[#121316] border border-white/5 rounded-xl hover:border-white/20 transition-all duration-300 overflow-hidden cursor-pointer",
+      "logo": "w-20 h-20 object-contain z-10 transition-transform duration-300 group-hover:scale-110",
+      "glow": "absolute inset-0 bg-gradient-to-t from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"
+    },
+    "newspaper_card": {
+      "wrapper": "relative group block aspect-[3/4] bg-[#121316] rounded-xl overflow-hidden cursor-pointer border border-white/10",
+      "overlay": "absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-colors z-10 flex flex-col justify-end p-4",
+      "action_button": "mt-3 bg-[#FF2244] text-white py-2 px-4 rounded text-sm font-bold opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 flex justify-center items-center gap-2"
+    },
+    "scoreboard_bug": {
+      "wrapper": "flex items-center justify-between bg-[#121316] border border-white/10 rounded-lg overflow-hidden max-w-2xl mx-auto",
+      "team_block": "flex items-center gap-3 p-4",
+      "score_block": "bg-black px-6 py-4 text-3xl font-changa font-bold text-white",
+      "status_badge": "bg-[#FF2244] text-white text-xs font-bold px-2 py-1 uppercase tracking-widest"
+    }
+  },
+  "motion": {
+    "transitions": "Fast and snappy. 200ms-300ms. TV broadcasts don't have slow, floaty animations.",
+    "ticker": "Continuous linear translation (marquee) for the news ticker. Use CSS animation: @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }",
+    "hover": "Scale up slightly (scale-105), increase border opacity, and add a subtle box-shadow glow using the accent color.",
+    "page_load": "Staggered fade-up for grid items. The scoreboard should slide down from the top."
+  },
+  "image_urls": {
+    "backgrounds": [
+      {
+        "url": "https://images.unsplash.com/photo-1679391029864-d46f366a456b?crop=entropy&cs=srgb&fm=jpg&ixid=M3w3NDk1Nzd8MHwxfHNlYXJjaHwyfHxmb290YmFsbCUyMHN0YWRpdW0lMjBkYXJrJTIwbmlnaHR8ZW58MHx8fHwxNzgzODI0MTUzfDA&ixlib=rb-4.1.0&q=85",
+        "description": "Dark stadium filled with people, ideal for hero section background with heavy black gradient overlay."
+      }
+    ],
+    "players": [
+      {
+        "url": "https://images.pexels.com/photos/35227270/pexels-photo-35227270.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Football player in action - use as cutout for 'Global Stars' section"
+      },
+      {
+        "url": "https://images.unsplash.com/photo-1560272564-c83b66b1ad12?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjAzNTl8MHwxfHNlYXJjaHwxfHxzb2NjZXIlMjBwbGF5ZXIlMjBwb3J0cmFpdCUyMGFjdGlvbnxlbnwwfHx8fDE3ODM4MjQxNTN8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Man playing soccer - use as cutout for 'Global Stars' section"
+      }
+    ],
+    "newspapers": [
+      {
+        "url": "https://images.unsplash.com/photo-1579532582940-957ceba4f373?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NzR8MHwxfHNlYXJjaHwxfHxzcG9ydHMlMjBuZXdzcGFwZXIlMjB0eXBvZ3JhcGh5fGVufDB8fHx8MTc4MzgyNDE1M3ww&ixlib=rb-4.1.0&q=85",
+        "description": "Sports newspaper cover for the 'Newspapers Grid'"
+      }
+    ]
+  },
+  "instructions_to_main_agent": [
+    "You are building a self-contained HTML file (Single-file hybrid dashboard) as requested by the user. Do NOT split into React components unless strictly enforcing standard environment setup, but prioritize a single file with vanilla CSS/JS if possible based on the user's explicit prompt.",
+    "Include Tailwind CSS via CDN (e.g., <script src=\"https://cdn.tailwindcss.com\"></script>) if going the single HTML file route.",
+    "Configure Tailwind in the head to include the custom colors and fonts specified in this JSON.",
+    "This must be an RTL-first interface. Add dir='rtl' to the html tag and apply 'lang=\"ar\"'.",
+    "Embrace the 'TV Studio Broadcast' aesthetic (أستوديو بث رياضي). It should feel like a premium sports channel (beIN Sports, Sky Sports). Use high contrast (obsidian base + stark white text + intense red live accents).",
+    "Replace text club names with actual team logos in the grid. If you lack specific logos, use CSS to create a premium monogram or shield placeholder.",
+    "Implement the live news ticker as a fixed element at the bottom of the screen. It should have a red 'عاجل' or 'مباشر' block on the right, and scrolling text to the left. Use vanilla JS or CSS animations for the scroll.",
+    "For the 'Newspapers grid', hovering over a newspaper should reveal a glowing 'تصفح مترجماً للعربية' (Browse translated to Arabic) button.",
+    "Include a prominent Scoreboard component (نتائج ومواعيد المباريات مباشرة). It should mimic TV scorebugs (team logos, scores, match time like 'Live 75' or 'FT').",
+    "The UI is a single page application. Handle navigation via vanilla JS to toggle active 'views' or scroll to sections (Trending News, Newspapers, Saudi clubs, World clubs, Global stars, Live TV).",
+    "Integrate a live clock and geolocation weather as requested.",
+    "Live TV channels should open a YouTube player modal with forced Arabic subtitles and a 'geo-bypass' toggle style button overlay.",
+    "Add data-testid attributes to all interactive elements for testing."
+  ],
+  "UNIVERSAL_GUIDELINES_FOR_MAIN_AGENT": [
+    "Do not converge toward generic outputs. Avoid simplistic gradients and AI slop.",
+    "Avoid centering layouts by default. Optical alignment over geometrical alignment.",
+    "NEVER use fully transparent backgrounds on headers or overlays over content.",
+    "Add hover and transition states to all interactive elements. A static design is dead.",
+    "Use sharp-edged buttons with micro-animations to fit the broadcast TV theme.",
+    "Create depth with layered elements and z-index hierarchy, use glass-morphism sparingly and purposefully (not muddy)."
+  ]
+}
