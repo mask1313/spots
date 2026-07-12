@@ -500,7 +500,7 @@ function sectionTitle(main, sub){
 function newsCard(k, i){
   const d=DATA[k]; if(!d) return '';
   const site=getSite(k); const ar=isArabicKey(k);
-  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="openBrowser('${site}','${esc(d.name)}')">
+  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="window.open('${site}','_blank')">
     <div class="flex items-center justify-between gap-2">
       <img src="${fav(site)}" onerror="this.style.display='none'" class="w-9 h-9 rounded-md bg-white/5 p-1" alt=""/>
       <span class="text-xs text-white/40 font-bold">${FLAGS[k]||'🌍'}</span>
@@ -508,7 +508,7 @@ function newsCard(k, i){
     <div class="font-changa font-bold text-lg mt-3 leading-tight">${esc(d.name)}</div>
     ${ar
       ? '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-gold font-bold"><i class="fa-solid fa-check"></i> مصدر عربي</span>'
-      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-globe"></i> يفتح داخل التطبيق</span>'}
+      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-white/40 font-bold">↗ يفتح في تاب جديد</span>'}
   </div>`;
 }
 function renderNews(){
@@ -632,9 +632,9 @@ function openInfo(key, type){
   el('info-sub').textContent=d.sub||'';
   const tEl=el('info-translate');
   if(site){
-    const label = ar ? 'زيارة الموقع الرسمي' : 'فتح الموقع داخل التطبيق';
+    const label = ar ? 'زيارة الموقع الرسمي' : 'فتح الموقع ↗';
     const style = ar ? 'background:linear-gradient(135deg,#B38600,#FFC107)' : '';
-    tEl.innerHTML=`<button class="tbtn" style="${style}" onclick="closeInfo();openBrowser('${site}','${esc(d.name)}')"><i class="fa-solid fa-globe"></i><span>${label}</span></button>`;
+    tEl.innerHTML=`<a class="tbtn" style="${style}" href="${site}" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i><span>${label}</span></a>`;
     tEl.style.display='block';
   } else { tEl.innerHTML=''; tEl.style.display='none'; }
   el('info-links').innerHTML=(d.links||[]).map(l=>{
