@@ -469,35 +469,42 @@ function isArabicKey(key){ return AR_KEYS.has(key); }
 function fav(url){ const d=domainOf(url); return d?`https://icons.duckduckgo.com/ip3/${d}.ico`:''; }
 function monogram(name){ return (name||'?').trim().charAt(0); }
 async function _fetchRSS(feedUrl){
-  try{
-    // Google News RSS يسمح بـ CORS مباشرة
-    const r = await fetch(feedUrl, {signal: AbortSignal.timeout(5000)});
-    if(!r.ok) throw new Error('fail');
-    const text = await r.text();
-    const parser = new DOMParser();
-    const xml = parser.parseFromString(text, 'text/xml');
-    const items = [...xml.querySelectorAll('item')].slice(0,6).map(it=>{
-      const desc = it.querySelector('description')?.textContent||'';
-      const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
-      return {
-        title: it.querySelector('title')?.textContent?.trim()||'',
-        description: desc.replace(/<[^>]+>/g,'').trim(),
-        link: it.querySelector('link')?.textContent?.trim()||'#',
-        pubDate: it.querySelector('pubDate')?.textContent||'',
-        thumbnail: imgMatch?imgMatch[1]:'',
-      };
-    }).filter(it=>it.title.length>5);
-    return items;
-  }catch(e){ return []; }
+  const proxies = [
+    url => `https://corsproxy.io/?${encodeURIComponent(url)}`,
+    url => `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+  ];
+  for(const makeProxy of proxies){
+    try{
+      const r = await fetch(makeProxy(feedUrl), {signal: AbortSignal.timeout(8000)});
+      if(!r.ok) continue;
+      const text = await r.text();
+      if(!text || text.length < 100) continue;
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(text, 'text/xml');
+      const items = [...xml.querySelectorAll('item')].slice(0,8).map(it=>{
+        const desc = it.querySelector('description')?.textContent||'';
+        const imgMatch = desc.match(/<img[^>]+src=["']([^"']+)["']/i);
+        return {
+          title: it.querySelector('title')?.textContent?.trim()||'',
+          description: desc.replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim(),
+          link: it.querySelector('link')?.textContent?.trim()||'#',
+          pubDate: it.querySelector('pubDate')?.textContent||'',
+          thumbnail: imgMatch?imgMatch[1]:'',
+        };
+      }).filter(it=>it.title.length>5);
+      if(items.length) return items;
+    }catch(e){}
+  }
+  return [];
 }
 
 /* ============ RSS FEEDS للأخبار الداخلية ============ */
 const RSS_FEEDS = [
-  {name:'كرة القدم',    flag:'⚽', url:'https://news.google.com/rss/topics/CAAqKggKIiRDQkFTRlFvSUwyMHZNRFp1ZEdvU0JXVnVMVWRDR2dKVFV5Z0FQAQ?hl=ar&gl=SA&ceid=SA:ar', lang:'ar'},
-  {name:'رياضة',        flag:'🏆', url:'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNR1p2Y0hNU0JXVnVMVWRDR2dKVFV5Z0FQAQ?hl=ar&gl=SA&ceid=SA:ar', lang:'ar'},
-  {name:'الهلال والنصر',flag:'🇸🇦', url:'https://news.google.com/rss/search?q=الهلال+OR+النصر+OR+الاتحاد+OR+الاتفاق&hl=ar&gl=SA&ceid=SA:ar&when=1d', lang:'ar'},
-  {name:'دوري روشن',    flag:'🇸🇦', url:'https://news.google.com/rss/search?q=دوري+روشن&hl=ar&gl=SA&ceid=SA:ar&when=3d', lang:'ar'},
-  {name:'مباريات اليوم',flag:'📅', url:'https://news.google.com/rss/search?q=مباريات+اليوم+كرة+القدم&hl=ar&gl=SA&ceid=SA:ar&when=1d', lang:'ar'},
+  {name:'كرة القدم',    flag:'⚽', url:'https://news.google.com/rss/search?q=كرة+القدم&hl=ar&gl=SA&ceid=SA:ar',           lang:'ar'},
+  {name:'دوري روشن',    flag:'🇸🇦', url:'https://news.google.com/rss/search?q=دوري+روشن&hl=ar&gl=SA&ceid=SA:ar',          lang:'ar'},
+  {name:'الهلال',       flag:'🇸🇦', url:'https://news.google.com/rss/search?q=الهلال+السعودي&hl=ar&gl=SA&ceid=SA:ar',      lang:'ar'},
+  {name:'دوري الأبطال', flag:'⭐',  url:'https://news.google.com/rss/search?q=دوري+ابطال+اوروبا&hl=ar&gl=SA&ceid=SA:ar',   lang:'ar'},
+  {name:'انتقالات',     flag:'💰',  url:'https://news.google.com/rss/search?q=انتقالات+لاعبين&hl=ar&gl=SA&ceid=SA:ar',      lang:'ar'},
 ];
 
 /* مفتاح ترجمة Anthropic Claude عبر API */
