@@ -1,0 +1,463 @@
+
+/* ============ NEW SOURCES (extend DATA) ============ */
+Object.assign(DATA, {
+  beinsports:  { name:'beIN SPORTS', sub:'قطر • رياضة', links:[
+    {cls:'icon-web',label:'beinsports.com',url:'https://www.beinsports.com'},
+    {cls:'icon-x',label:'@beINSPORTS',url:'https://x.com/beINSPORTS'},
+    {cls:'icon-ig',label:'beinsports',url:'https://www.instagram.com/beinsports'},
+    {cls:'icon-yt',label:'beIN SPORTS',url:'https://www.youtube.com/@beINSPORTS'} ]},
+  onefootball: { name:'OneFootball', sub:'ألمانيا • رياضة', links:[
+    {cls:'icon-web',label:'onefootball.com',url:'https://onefootball.com'},
+    {cls:'icon-x',label:'@OneFootball',url:'https://x.com/OneFootball'},
+    {cls:'icon-ig',label:'onefootball',url:'https://www.instagram.com/onefootball'},
+    {cls:'icon-yt',label:'OneFootball',url:'https://www.youtube.com/@OneFootball'} ]},
+  tuttosport:  { name:'Tuttosport', sub:'إيطاليا • رياضة', links:[
+    {cls:'icon-web',label:'tuttosport.com',url:'https://www.tuttosport.com'},
+    {cls:'icon-x',label:'@tuttosport',url:'https://x.com/tuttosport'},
+    {cls:'icon-ig',label:'tuttosport',url:'https://www.instagram.com/tuttosport'} ]},
+  kicker:      { name:'kicker', sub:'ألمانيا • رياضة', links:[
+    {cls:'icon-web',label:'kicker.de',url:'https://www.kicker.de'},
+    {cls:'icon-x',label:'@kicker',url:'https://x.com/kicker'},
+    {cls:'icon-ig',label:'kicker',url:'https://www.instagram.com/kicker'} ]},
+  rmcsport:    { name:'RMC Sport', sub:'فرنسا • رياضة', links:[
+    {cls:'icon-web',label:'rmcsport',url:'https://rmcsport.bfmtv.com'},
+    {cls:'icon-x',label:'@RMCsport',url:'https://x.com/RMCsport'},
+    {cls:'icon-ig',label:'rmcsport',url:'https://www.instagram.com/rmcsport'} ]},
+  guardian:    { name:'The Guardian', sub:'إنجلترا • كرة القدم', links:[
+    {cls:'icon-web',label:'theguardian.com/football',url:'https://www.theguardian.com/football'},
+    {cls:'icon-x',label:'@guardian_sport',url:'https://x.com/guardian_sport'} ]},
+  corriere:    { name:'Corriere dello Sport', sub:'إيطاليا • رياضة', links:[
+    {cls:'icon-web',label:'corrieredellosport.it',url:'https://www.corrieredellosport.it'},
+    {cls:'icon-x',label:'@CorSport',url:'https://x.com/CorSport'} ]},
+
+  milan:      { name:'ميلان', sub:'🇮🇹 AC Milan • إيطاليا', links:[
+    {cls:'icon-web',label:'acmilan.com',url:'https://www.acmilan.com'},
+    {cls:'icon-x',label:'@acmilan',url:'https://x.com/acmilan'},
+    {cls:'icon-ig',label:'acmilan',url:'https://www.instagram.com/acmilan'},
+    {cls:'icon-yt',label:'AC Milan',url:'https://www.youtube.com/@acmilan'} ]},
+  tottenham:  { name:'توتنهام', sub:'🏴 Tottenham • إنجلترا', links:[
+    {cls:'icon-web',label:'tottenhamhotspur.com',url:'https://www.tottenhamhotspur.com'},
+    {cls:'icon-x',label:'@SpursOfficial',url:'https://x.com/SpursOfficial'},
+    {cls:'icon-ig',label:'spursofficial',url:'https://www.instagram.com/spursofficial'},
+    {cls:'icon-yt',label:'Spurs',url:'https://www.youtube.com/@spurs'} ]},
+  newcastle:  { name:'نيوكاسل', sub:'🏴 Newcastle • إنجلترا', links:[
+    {cls:'icon-web',label:'nufc.co.uk',url:'https://www.nufc.co.uk'},
+    {cls:'icon-x',label:'@NUFC',url:'https://x.com/NUFC'},
+    {cls:'icon-ig',label:'nufc',url:'https://www.instagram.com/nufc'},
+    {cls:'icon-yt',label:'NUFC',url:'https://www.youtube.com/@nufc'} ]},
+  sevilla:    { name:'إشبيلية', sub:'🇪🇸 Sevilla FC • إسبانيا', links:[
+    {cls:'icon-web',label:'sevillafc.es',url:'https://www.sevillafc.es'},
+    {cls:'icon-x',label:'@SevillaFC',url:'https://x.com/SevillaFC'},
+    {cls:'icon-ig',label:'sevillafc',url:'https://www.instagram.com/sevillafc'},
+    {cls:'icon-yt',label:'Sevilla FC',url:'https://www.youtube.com/@sevillafc'} ]},
+  marseille:  { name:'مارسيليا', sub:'🇫🇷 Olympique Marseille • فرنسا', links:[
+    {cls:'icon-web',label:'om.fr',url:'https://www.om.fr'},
+    {cls:'icon-x',label:'@OM_Officiel',url:'https://x.com/OM_Officiel'},
+    {cls:'icon-ig',label:'om',url:'https://www.instagram.com/om'},
+    {cls:'icon-yt',label:'OM',url:'https://www.youtube.com/@OM'} ]},
+});
+
+function starEntry(name, sub, ig, x){
+  const links=[{cls:'icon-ig',label:ig,url:'https://www.instagram.com/'+ig}];
+  if(x) links.push({cls:'icon-x',label:'@'+x,url:'https://x.com/'+x});
+  links.push({cls:'icon-web',label:'الملف الرياضي',url:'https://www.google.com/search?q='+encodeURIComponent(name+' footballer')});
+  return { name, sub, links };
+}
+Object.assign(DATA, {
+  rodri:          starEntry('رودري','🇪🇸 Rodri • إسبانيا','rodri','rodri'),
+  saka:           starEntry('بوكايو ساكا','🏴 Bukayo Saka • إنجلترا','bukayosaka87','BukayoSaka87'),
+  foden:          starEntry('فيل فودين','🏴 Phil Foden • إنجلترا','philfoden','PhilFoden'),
+  musiala:        starEntry('جمال موسيالا','🇩🇪 Jamal Musiala • ألمانيا','jamalmusiala','JamalMusiala'),
+  wirtz:          starEntry('فلوريان فيرتز','🇩🇪 Florian Wirtz • ألمانيا','florianwirtz','florianwirtz'),
+  nicowilliams:   starEntry('نيكو ويليامز','🇪🇸 Nico Williams • إسبانيا','nico.williams',''),
+  lautaro:        starEntry('لاوتارو مارتينيز','🇦🇷 Lautaro Martinez • الأرجنتين','lautaromartinez','LautaroMartinez'),
+  leao:           starEntry('رافائيل لياو','🇵🇹 Rafael Leao • البرتغال','iamrafaeleao','RafaeLeao7'),
+  brunofernandes: starEntry('برونو فيرنانديز','🇵🇹 Bruno Fernandes • البرتغال','brunofernandes.10','B_Fernandes8'),
+  palmer:         starEntry('كول بالمر','🏴 Cole Palmer • إنجلترا','coldpalmer',''),
+  rodrygo:        starEntry('رودريغو','🇧🇷 Rodrygo • البرازيل','rodrygogoes','rodrygogoes'),
+  valverde:       starEntry('فيدي فالفيردي','🇺🇾 Fede Valverde • أوروغواي','fedeevalverde','fedevalverde'),
+});
+
+/* ============ CONFIG ============ */
+const PAGES = [
+  {id:'home',    ar:'الرئيسية',    icon:'fa-house'},
+  {id:'matches', ar:'المباريات',   icon:'fa-futbol'},
+  {id:'news',    ar:'الصحف',       icon:'fa-newspaper'},
+  {id:'saudi',   ar:'دوري روشن',   icon:'fa-shield-halved'},
+  {id:'world',   ar:'أندية العالم',icon:'fa-earth-americas'},
+  {id:'stars',   ar:'نجوم العالم', icon:'fa-star'},
+  {id:'live',    ar:'البث المباشر',icon:'fa-tower-broadcast'},
+];
+
+const NEWS_WORLD = ['skysports','marca','as','lequipe','gazzetta','bbcsport','goal','beinsports','onefootball','athletic','bild','sport','mundodeportivo','tuttosport','kicker','rmcsport','guardian','corriere','transfermarkt','espn'];
+const NEWS_AR    = ['arriyadiyah','kooora','filgoal','sabq','okaz','sada','alwatan','saudi360','almowaten','riyadhi','nujoomfc'];
+const CLUBS_SAUDI= ['hilal','nassr','ittihad','ahli','shabab','fayha','qadisiyah','ettifaq','damac','khaleej','fath','abha','raed','orubah','wehda','hazm','akhdoud','tai'];
+const CLUBS_WORLD= ['realmadrid','barca','mancity','liverpool','manutd','bayern','psg','juventus','inter','milan','arsenal','chelsea','tottenham','newcastle','atletico','sevilla','dortmund','ajax','porto','benfica','napoli','roma','marseille','celtic','intermiami'];
+const STARS      = ['ronaldo','messi','mbappe','haaland','neymar','benzema','vinicius','salah','bellingham','yamal','kane','debruyne','lewy','modric','pedri','rodri','saka','foden','musiala','wirtz','nicowilliams','lautaro','leao','brunofernandes','palmer','rodrygo','valverde','osimhen','rashford','sane','dybala','dejong'];
+
+const FLAGS = { skysports:'🇬🇧',marca:'🇪🇸',as:'🇪🇸',lequipe:'🇫🇷',gazzetta:'🇮🇹',bbcsport:'🇬🇧',goal:'🌍',beinsports:'🇶🇦',onefootball:'🇩🇪',athletic:'🇺🇸',bild:'🇩🇪',sport:'🇪🇸',mundodeportivo:'🇪🇸',tuttosport:'🇮🇹',kicker:'🇩🇪',rmcsport:'🇫🇷',guardian:'🇬🇧',corriere:'🇮🇹',transfermarkt:'🇩🇪',espn:'🇺🇸',arriyadiyah:'🇸🇦',kooora:'🇸🇦',filgoal:'🇪🇬',sabq:'🇸🇦',okaz:'🇸🇦',sada:'🇸🇦',alwatan:'🇸🇦',saudi360:'🇸🇦',almowaten:'🇸🇦',riyadhi:'🇸🇦',nujoomfc:'🇸🇦' };
+
+const AR_KEYS = new Set([...CLUBS_SAUDI, ...NEWS_AR]);
+
+const LIVE_CHANNELS = [
+  {name:'SSC 1', id:'dQw4w9WgXcQ', tag:'السعودية 🇸🇦'},
+  {name:'SSC 2', id:'dQw4w9WgXcQ', tag:'السعودية 🇸🇦'},
+  {name:'beIN SPORTS 1', id:'dQw4w9WgXcQ', tag:'MENA'},
+  {name:'beIN SPORTS 2', id:'dQw4w9WgXcQ', tag:'MENA'},
+  {name:'Sky Sports PL', id:'dQw4w9WgXcQ', tag:'UK 🇬🇧'},
+  {name:'ESPN FC', id:'dQw4w9WgXcQ', tag:'US 🇺🇸'},
+  {name:'DAZN', id:'dQw4w9WgXcQ', tag:'GLOBAL 🌍'},
+  {name:'La Liga TV', id:'dQw4w9WgXcQ', tag:'ES 🇪🇸'},
+];
+
+/* ============ HELPERS ============ */
+const el = id => document.getElementById(id);
+function esc(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function getSite(key){ const d=DATA[key]; if(!d)return ''; const w=(d.links||[]).find(l=>l.cls==='icon-web'); return w?w.url:''; }
+function domainOf(url){ try{ return new URL(url).hostname.replace(/^www\./,''); }catch{ return ''; } }
+function tUrl(url){ return 'https://translate.google.com/translate?sl=auto&tl=ar&u='+encodeURIComponent(url); }
+function isArabicKey(key){ return AR_KEYS.has(key); }
+function fav(url){ const d=domainOf(url); return d?`https://icons.duckduckgo.com/ip3/${d}.ico`:''; }
+function monogram(name){ return (name||'?').trim().charAt(0); }
+
+async function fetchJSON(url){
+  try{ const r=await fetch(url); if(r.ok) return await r.json(); }catch(e){}
+  try{ const r=await fetch('https://api.allorigins.win/raw?url='+encodeURIComponent(url)); if(r.ok) return await r.json(); }catch(e){}
+  return null;
+}
+
+/* ============ NAV / PAGES ============ */
+function buildNav(){
+  el('nav').innerHTML = PAGES.map(p=>`
+    <button class="navbtn whitespace-nowrap px-4 py-2.5 rounded-xl font-changa font-bold text-sm text-white/60 flex items-center gap-2" data-page="${p.id}" data-testid="nav-${p.id}" onclick="showPage('${p.id}')">
+      <i class="fa-solid ${p.icon}"></i><span>${p.ar}</span>
+    </button>`).join('');
+  el('pages').innerHTML = PAGES.map(p=>`<section id="page-${p.id}" class="page-sec" style="display:none" data-testid="page-${p.id}"></section>`).join('');
+}
+let currentPage='home';
+function showPage(id){
+  currentPage=id;
+  document.querySelectorAll('.page-sec').forEach(s=>s.style.display='none');
+  document.querySelectorAll('.navbtn').forEach(b=>b.classList.toggle('active', b.dataset.page===id));
+  const sec=el('page-'+id); sec.style.display='block';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='matches') loadMatches();
+}
+
+/* ============ RENDERERS ============ */
+function sectionTitle(main, sub){
+  return `<div class="mb-5 flex items-end justify-between gap-3 flex-wrap">
+    <div><h2 class="font-changa text-3xl font-extrabold flex items-center gap-3"><span class="w-1.5 h-8 bg-live rounded-full inline-block"></span>${main}</h2>
+    ${sub?`<p class="text-white/40 text-sm mt-1 pr-5">${sub}</p>`:''}</div></div>`;
+}
+
+function newsCard(k, i){
+  const d=DATA[k]; if(!d) return '';
+  const site=getSite(k); const ar=isArabicKey(k);
+  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="openInfo('${k}','news')" data-testid="news-card">
+    <div class="flex items-center justify-between gap-2">
+      <img src="${fav(site)}" onerror="this.style.display='none'" class="w-9 h-9 rounded-md bg-white/5 p-1" alt=""/>
+      <span class="text-xs text-white/40 font-bold">${FLAGS[k]||'🌍'}</span>
+    </div>
+    <div class="font-changa font-bold text-lg mt-3 leading-tight">${esc(d.name)}</div>
+    ${ar
+      ? '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-gold font-bold"><i class="fa-solid fa-check"></i> مصدر عربي</span>'
+      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-language"></i> ترجمة فورية للعربية</span>'}
+  </div>`;
+}
+function renderNews(){
+  el('page-news').innerHTML =
+    sectionTitle('الصحف العالمية','اضغط على أي صحيفة لفتحها مترجمة بالكامل للعربية')+
+    `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-10">${NEWS_WORLD.map(newsCard).join('')}</div>`+
+    sectionTitle('صحف عربية','مصادر عربية مباشرة')+
+    `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">${NEWS_AR.map(newsCard).join('')}</div>`;
+}
+
+function clubCard(k, i){
+  const d=DATA[k]; if(!d) return '';
+  const badge=ASSETS.clubs[k];
+  const logo = badge
+    ? `<img src="${badge}" class="w-16 h-16 object-contain transition-transform duration-300 group-hover:scale-110" alt="" loading="lazy"/>`
+    : `<div class="w-16 h-16 rounded-full bg-gradient-to-br from-elec to-live flex items-center justify-center font-changa text-2xl font-extrabold">${esc(monogram(d.name))}</div>`;
+  return `<div class="group lift bg-surface border border-white/10 rounded-xl p-4 flex flex-col items-center gap-3 cursor-pointer fade-up" style="animation-delay:${Math.min(i*30,350)}ms" onclick="openInfo('${k}','club')" data-testid="club-card">
+    ${logo}
+    <div class="font-changa font-bold text-sm text-center">${esc(d.name)}</div>
+  </div>`;
+}
+function renderClubs(){
+  el('page-saudi').innerHTML = sectionTitle('دوري روشن السعودي','أندية دوري روشن للمحترفين')+
+    `<div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">${CLUBS_SAUDI.map(clubCard).join('')}</div>`;
+  el('page-world').innerHTML = sectionTitle('أندية العالم','أبرز الأندية العالمية')+
+    `<div class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-3">${CLUBS_WORLD.map(clubCard).join('')}</div>`;
+}
+
+function starCard(k, i){
+  const d=DATA[k]; if(!d) return '';
+  const img=ASSETS.players[k];
+  const num=(i+1);
+  const photo = img
+    ? `<img src="${img}" class="star-photo" alt="" loading="lazy" onerror="this.style.display='none'"/>`
+    : '';
+  return `<div class="star-card lift cursor-pointer fade-up" style="animation-delay:${Math.min(i*30,400)}ms" onclick="openInfo('${k}','star')" data-testid="star-card">
+    <div class="star-num">${num}</div>
+    ${photo}
+    <div class="absolute inset-x-0 bottom-0 z-10 p-3 bg-gradient-to-t from-black via-black/70 to-transparent">
+      <div class="font-changa font-bold text-sm leading-tight">${esc(d.name)}</div>
+      <div class="text-[10px] text-white/50 mt-0.5">${esc((d.sub||'').split('•')[0])}</div>
+    </div>
+  </div>`;
+}
+function renderStars(){
+  el('page-stars').innerHTML = sectionTitle('نجوم العالم','أبرز نجوم كرة القدم — اضغط لعرض حساباتهم الرسمية')+
+    `<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">${STARS.map(starCard).join('')}</div>`;
+}
+
+function renderLive(){
+  el('page-live').innerHTML = sectionTitle('البث المباشر','قنوات رياضية — مع خيار التشغيل البديل لتجاوز الحظر الجغرافي')+
+    `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">`+
+    LIVE_CHANNELS.map((c,i)=>`
+      <div class="lift bg-surface border border-white/10 rounded-xl p-5 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${i*40}ms" onclick="openPlayer('${esc(c.name)}','${c.id}')" data-testid="live-card">
+        <div class="flex items-center gap-1 text-live text-[10px] font-changa font-bold mb-3"><span class="live-dot"></span> LIVE</div>
+        <div class="font-changa text-xl font-extrabold">${esc(c.name)}</div>
+        <div class="text-[11px] text-white/40 mt-1">${esc(c.tag)}</div>
+        <i class="fa-solid fa-play absolute bottom-4 left-4 text-white/20 text-2xl group-hover:text-live"></i>
+      </div>`).join('')+`</div>
+      <p class="text-white/30 text-xs mt-4"><i class="fa-solid fa-circle-info"></i> القنوات توضيحية؛ الميزة الأساسية هي مشغّل بترجمة عربية تلقائية + زر تجاوز الحظر الجغرافي.</p>`;
+}
+
+/* ============ HOME (hero + news slider) ============ */
+function renderHomeShell(){
+  el('page-home').innerHTML = `
+    <div class="relative rounded-3xl overflow-hidden border border-white/10 mb-8" style="min-height:280px">
+      <div class="absolute inset-0 bg-cover bg-center" style="background-image:url('https://images.unsplash.com/photo-1679391029864-d46f366a456b?w=1400&q=80&auto=format&fit=crop')"></div>
+      <div class="absolute inset-0" style="background:linear-gradient(90deg,#0A0A0B 8%,rgba(10,10,11,.7) 45%,rgba(10,10,11,.25))"></div>
+      <div class="relative z-10 p-8 sm:p-12 max-w-xl">
+        <div class="inline-flex items-center gap-2 text-live font-changa font-bold text-xs border border-live/50 rounded-full px-3 py-1 mb-4"><span class="live-dot"></span> بث حي • كرة القدم</div>
+        <h2 class="font-changa text-4xl sm:text-6xl font-extrabold leading-none mb-3">أستوديو<br/><span class="text-gold">كرة القدم</span></h2>
+        <p class="text-white/70 mb-6 text-sm sm:text-base">أخبار لحظية، صحف عالمية مترجمة، أندية ونجوم، ونتائج مباشرة — كل ما يخص كرة القدم في مكان واحد.</p>
+        <div class="flex gap-3">
+          <button onclick="showPage('matches')" class="bg-live hover:brightness-110 transition text-white font-changa font-bold rounded-xl px-5 py-3 flex items-center gap-2" data-testid="hero-matches-btn"><i class="fa-solid fa-futbol"></i> النتائج والمواعيد</button>
+          <button onclick="showPage('news')" class="glass border border-white/15 hover:border-white/30 transition font-changa font-bold rounded-xl px-5 py-3 flex items-center gap-2"><i class="fa-solid fa-newspaper"></i> الصحف</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-changa text-2xl font-extrabold flex items-center gap-2"><i class="fa-solid fa-bolt text-gold"></i> الأخبار المتداولة</h3>
+      <div class="flex gap-2">
+        <button onclick="nsPrev()" class="w-9 h-9 rounded-lg glass border border-white/10 hover:border-white/30 transition"><i class="fa-solid fa-chevron-right"></i></button>
+        <button onclick="nsNext()" class="w-9 h-9 rounded-lg glass border border-white/10 hover:border-white/30 transition"><i class="fa-solid fa-chevron-left"></i></button>
+      </div>
+    </div>
+    <div class="overflow-hidden rounded-2xl" id="ns-viewport">
+      <div class="flex gap-3 transition-transform duration-500" id="ns-track"></div>
+    </div>
+    <div class="flex justify-center gap-1.5 mt-4" id="ns-dots"></div>`;
+}
+
+/* ============ INFO POPUP ============ */
+function openInfo(key, type){
+  const d=DATA[key]; if(!d) return;
+  const site=getSite(key); const ar=isArabicKey(key);
+
+  // logo
+  let logoHtml='';
+  if(type==='club'){ const b=ASSETS.clubs[key]; logoHtml = b?`<img src="${b}" class="w-16 h-16 object-contain">`:`<div class="w-16 h-16 rounded-full bg-gradient-to-br from-elec to-live flex items-center justify-center font-changa text-2xl font-extrabold">${esc(monogram(d.name))}</div>`; }
+  else if(type==='star'){ const p=ASSETS.players[key]; logoHtml = p?`<img src="${p}" class="w-16 h-16 object-cover rounded-full border border-white/20">`:`<div class="w-16 h-16 rounded-full bg-gradient-to-br from-gold to-live flex items-center justify-center text-2xl"><i class="fa-solid fa-star"></i></div>`; }
+  else { logoHtml = site?`<img src="${fav(site)}" onerror="this.style.display='none'" class="w-14 h-14 rounded-lg bg-white/5 p-1.5">`:''; }
+  el('info-logo').innerHTML = logoHtml;
+
+  el('info-name').textContent = d.name;
+  el('info-sub').textContent = d.sub || '';
+
+  // translate button (non-arabic sources with a website)
+  const tEl=el('info-translate');
+  if(site && !ar){
+    const label = type==='news' ? 'تصفح الصحيفة مترجمة بالكامل للعربية'
+               : type==='club' ? 'تصفح موقع النادي مترجماً للعربية'
+               : 'تصفح الموقع مترجماً للعربية';
+    tEl.innerHTML = `<a class="tbtn" href="${tUrl(site)}" target="_blank" rel="noopener" data-testid="translate-btn"><i class="fa-solid fa-language"></i><span>${label}</span></a>`;
+    tEl.style.display='block';
+  } else if(site && ar){
+    tEl.innerHTML = `<a class="tbtn" style="background:linear-gradient(135deg,#B38600,#FFC107)" href="${site}" target="_blank" rel="noopener" data-testid="visit-btn"><i class="fa-solid fa-globe"></i><span>زيارة الموقع الرسمي</span></a>`;
+    tEl.style.display='block';
+  } else { tEl.innerHTML=''; tEl.style.display='none'; }
+
+  // links row
+  el('info-links').innerHTML = (d.links||[]).map(l=>{
+    const href = (l.cls==='icon-web' && !ar) ? tUrl(l.url) : l.url;
+    return `<a href="${href}" target="_blank" rel="noopener" class="w-11 h-11 rounded-xl bg-white/5 border border-white/10 hover:border-white/30 hover:bg-white/10 transition flex items-center justify-center" title="${esc(l.label)}" data-testid="info-link">
+      <span class="w-5 h-5 inline-flex items-center justify-center">${ICONS[l.cls]||'🔗'}</span></a>`;
+  }).join('');
+
+  el('info-modal').classList.add('open');
+}
+function closeInfo(e){ if(!e || e.target.id==='info-modal') el('info-modal').classList.remove('open'); }
+
+/* ============ PLAYER (YouTube AR subs + geo-bypass) ============ */
+let curVid='', altOn=false;
+function ytSrc(id){ return `https://www.youtube.com/embed/${id}?hl=ar&cc_lang_pref=ar&cc_load_policy=1&autoplay=1&rel=0`; }
+function altSrc(id){ return `https://piped.video/embed/${id}?autoplay=1`; }
+function openPlayer(name, id){
+  curVid=id; altOn=false;
+  const b=el('alt-player-btn'); b.classList.remove('on'); b.querySelector('.alt-player-label').innerText='في حال حظر الفيديو جغرافياً، اضغط هنا للتشغيل البديل';
+  el('player-title').innerText=name;
+  el('player-frame').src=ytSrc(id);
+  el('player-modal').classList.add('open');
+}
+function toggleAltPlayer(){
+  altOn=!altOn; const b=el('alt-player-btn'); const f=el('player-frame');
+  if(altOn){ f.src=altSrc(curVid); b.classList.add('on'); b.querySelector('.alt-player-label').innerText='✓ التشغيل البديل مُفعّل — اضغط للعودة للأصلي'; }
+  else{ f.src=ytSrc(curVid); b.classList.remove('on'); b.querySelector('.alt-player-label').innerText='في حال حظر الفيديو جغرافياً، اضغط هنا للتشغيل البديل'; }
+}
+function closePlayer(e){ if(!e || e.target.id==='player-modal' || (e.target.classList&&e.target.classList.contains('close-btn'))){ el('player-modal').classList.remove('open'); el('player-frame').src=''; } }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeInfo(); closePlayer(); } });
+
+/* ============ MATCHES (scores + fixtures) ============ */
+const LEAGUES=[
+  {id:4826, ar:'دوري روشن السعودي'},
+  {id:4328, ar:'الدوري الإنجليزي'},
+  {id:4335, ar:'الدوري الإسباني'},
+  {id:4332, ar:'الدوري الإيطالي'},
+  {id:4331, ar:'الدوري الألماني'},
+  {id:4480, ar:'دوري أبطال أوروبا'},
+];
+let matchesLoaded=false, matchesLoading=false;
+function scoreBug(e, isResult){
+  const hb=e.strHomeTeamBadge, ab=e.strAwayTeamBadge;
+  const img=u=>u?`<img src="${u}" class="w-9 h-9 object-contain" alt="">`:`<div class="w-9 h-9 rounded-full bg-white/10"></div>`;
+  const status = isResult ? `<span class="bg-white/10 text-white/70 text-[10px] font-bold px-2 py-1 rounded uppercase">${esc(e.strStatus||'FT')}</span>`
+                          : `<span class="bg-live text-white text-[10px] font-bold px-2 py-1 rounded">${esc((e.dateEvent||'').slice(5))} ${esc((e.strTime||'').slice(0,5))}</span>`;
+  const score = isResult ? `<div class="font-changa text-2xl font-extrabold px-4">${e.intHomeScore??'-'} <span class="text-white/30">:</span> ${e.intAwayScore??'-'}</div>`
+                         : `<div class="font-changa text-lg text-white/40 px-4">VS</div>`;
+  return `<div class="scorebug lift fade-up">
+    <div class="flex items-center gap-2 p-3 flex-1 min-w-0"><span class="truncate text-sm font-bold">${esc(e.strHomeTeam)}</span>${img(hb)}</div>
+    <div class="bg-black flex flex-col items-center justify-center px-2">${score}${status}</div>
+    <div class="flex items-center gap-2 p-3 flex-1 min-w-0 flex-row-reverse">${img(ab)}<span class="truncate text-sm font-bold text-right w-full">${esc(e.strAwayTeam)}</span></div>
+  </div>`;
+}
+async function loadMatches(){
+  if(matchesLoaded || matchesLoading) return;
+  matchesLoading=true;
+  const cacheKey='uh_matches';
+  const cached = (()=>{ try{ const c=JSON.parse(localStorage.getItem(cacheKey)||'null'); if(c && Date.now()-c.t < 1800000) return c.d; }catch{} return null; })();
+  const sec=el('page-matches');
+  if(cached){ renderMatches(cached.results, cached.fixtures); matchesLoaded=true; matchesLoading=false; return; }
+
+  sec.innerHTML = sectionTitle('نتائج ومواعيد المباريات','مباشرة من الدوريات الكبرى')+
+    `<div class="flex items-center gap-3 text-white/50 py-16 justify-center"><i class="fa-solid fa-futbol fa-spin text-2xl text-gold"></i> جاري تحميل المباريات...</div>`;
+
+  const results=[], fixtures=[];
+  for(const lg of LEAGUES){
+    const past = await fetchJSON(`https://www.thesportsdb.com/api/v1/json/3/eventspastleague.php?id=${lg.id}`);
+    (past&&past.events||[]).slice(0,2).forEach(e=>results.push(e));
+    const next = await fetchJSON(`https://www.thesportsdb.com/api/v1/json/3/eventsnextleague.php?id=${lg.id}`);
+    (next&&next.events||[]).slice(0,2).forEach(e=>fixtures.push(e));
+  }
+  try{ localStorage.setItem(cacheKey, JSON.stringify({t:Date.now(), d:{results, fixtures}})); }catch{}
+  renderMatches(results, fixtures);
+  matchesLoaded=true; matchesLoading=false;
+}
+function renderMatches(results, fixtures){
+  const sec=el('page-matches');
+  const rHtml = results.length ? results.map(e=>scoreBug(e,true)).join('') : '<p class="text-white/40 text-sm">لا توجد نتائج متاحة حالياً.</p>';
+  const fHtml = fixtures.length ? fixtures.map(e=>scoreBug(e,false)).join('') : '<p class="text-white/40 text-sm">لا توجد مواعيد متاحة حالياً.</p>';
+  sec.innerHTML = sectionTitle('نتائج ومواعيد المباريات','مباشرة من الدوريات الكبرى')+
+    `<h3 class="font-changa text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-solid fa-flag-checkered text-gold"></i> أحدث النتائج</h3>
+     <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-10">${rHtml}</div>
+     <h3 class="font-changa text-xl font-bold mb-3 flex items-center gap-2"><i class="fa-regular fa-clock text-live"></i> المباريات القادمة</h3>
+     <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">${fHtml}</div>`;
+}
+
+/* ============ NEWS SLIDER + TICKER ============ */
+let nsCur=0, nsTotal=0, nsTimer;
+window.nsGoTo=function(i){ const track=el('ns-track'); const slides=track.children; if(!slides.length)return; nsCur=((i%nsTotal)+nsTotal)%nsTotal; const w=(slides[0].offsetWidth||260)+12; track.style.transform=`translateX(${nsCur*w}px)`; document.querySelectorAll('#ns-dots .dot').forEach((d,idx)=>d.classList.toggle('bg-live',idx===nsCur)); resetAuto(); };
+window.nsPrev=()=>nsGoTo(nsCur-1); window.nsNext=()=>nsGoTo(nsCur+1);
+function resetAuto(){ clearInterval(nsTimer); nsTimer=setInterval(()=>nsGoTo(nsCur+1),3500); }
+
+const STATIC_NEWS=[
+ {t:'الهلال يواصل تصدر دوري روشن في الموسم الجديد', s:'روشن', l:'https://news.google.com/search?q=%D8%A7%D9%84%D9%87%D9%84%D8%A7%D9%84&hl=ar', img:'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=800&q=80'},
+ {t:'ريال مدريد يستعد لمواجهة حاسمة في دوري الأبطال', s:'أبطال أوروبا', l:'https://news.google.com/search?q=%D8%B1%D9%8A%D8%A7%D9%84+%D9%85%D8%AF%D8%B1%D9%8A%D8%AF&hl=ar', img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=800&q=80'},
+ {t:'رونالدو يقود النصر لفوز جديد ويسجل هدفاً مميزاً', s:'روشن', l:'https://news.google.com/search?q=%D8%B1%D9%88%D9%86%D8%A7%D9%84%D8%AF%D9%88&hl=ar', img:'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=800&q=80'},
+ {t:'برشلونة يواصل المنافسة على صدارة الليغا', s:'الليغا', l:'https://news.google.com/search?q=%D8%A8%D8%B1%D8%B4%D9%84%D9%88%D9%86%D8%A9&hl=ar', img:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=800&q=80'},
+ {t:'ميسي ونجوم إنتر ميامي في مواجهات قوية', s:'MLS', l:'https://news.google.com/search?q=%D9%85%D9%8A%D8%B3%D9%8A&hl=ar', img:'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=800&q=80'},
+ {t:'ليفربول يبحث عن الصدارة في البريمييرليغ', s:'إنجلترا', l:'https://news.google.com/search?q=%D9%84%D9%8A%D9%81%D8%B1%D8%A8%D9%88%D9%84&hl=ar', img:'https://images.unsplash.com/photo-1540747913346-19212a4b32a4?w=800&q=80'},
+];
+
+async function initNewsSlider(){
+  const track=el('ns-track'), dots=el('ns-dots');
+  let items=[];
+  const feeds=[
+    {rss:'https://arabic.sport360.com/feed', name:'سبورت 360'},
+    {rss:'https://www.aljazeera.net/aljazeerarss/sports', name:'الجزيرة رياضة'},
+    {rss:'https://e00-marca.uecdn.es/rss/futbol/primera-division.xml', name:'ماركا'},
+  ];
+  try{
+    for(const f of feeds){
+      const j=await fetchJSON(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.rss)}`);
+      if(j && j.status==='ok' && j.items){ j.items.forEach(it=>{ const t=(it.title||'').trim(); if(t.length>8) items.push({t, s:f.name, l:it.link||'#', img:it.thumbnail||it.enclosure?.link||null}); }); }
+      if(items.length>=10) break;
+    }
+  }catch(e){}
+  items = items.filter((v,i,a)=>a.findIndex(x=>x.t===v.t)===i).slice(0,10);
+  if(!items.length) items=STATIC_NEWS.slice();
+  items = items.map((it,i)=>({...it, img: it.img || STATIC_NEWS[i%STATIC_NEWS.length].img}));
+
+  nsTotal=items.length;
+  track.innerHTML=items.map(it=>`
+    <a href="${it.l}" target="_blank" rel="noopener" class="relative shrink-0 rounded-2xl overflow-hidden border border-white/10 group" style="width:260px;height:200px" data-testid="news-slide">
+      <div class="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style="background-image:url('${it.img}')"></div>
+      <div class="absolute inset-0" style="background:linear-gradient(to top,#0A0A0B 8%,rgba(10,10,11,.3) 60%,transparent)"></div>
+      <div class="absolute inset-x-0 bottom-0 p-4 z-10">
+        <span class="text-[10px] font-changa font-bold bg-live text-white rounded px-2 py-0.5">${esc(it.s)}</span>
+        <div class="font-bold text-sm mt-2 leading-snug line-clamp-2">${esc(it.t)}</div>
+      </div>
+    </a>`).join('');
+  dots.innerHTML=items.map((_,i)=>`<div class="dot w-2 h-2 rounded-full ${i===0?'bg-live':'bg-white/20'} cursor-pointer transition" onclick="nsGoTo(${i})"></div>`).join('');
+
+  // touch
+  let tx=0; const vp=el('ns-viewport');
+  vp.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+  vp.addEventListener('touchend',e=>{ const d=tx-e.changedTouches[0].clientX; if(Math.abs(d)>40) d>0?nsNext():nsPrev(); },{passive:true});
+  resetAuto();
+
+  // TICKER
+  const tickerItems = items.map(it=>`<span class="ticker-item">${esc(it.t)}</span>`).join('');
+  el('ticker-move').innerHTML = tickerItems + tickerItems; // duplicate for seamless loop
+}
+
+/* ============ CLOCK + WEATHER ============ */
+function updateClock(){
+  const now=new Date();
+  const h=String(now.getHours()).padStart(2,'0'), m=String(now.getMinutes()).padStart(2,'0');
+  const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  el('tb-time').textContent=`${h}:${m}`;
+  el('tb-date').textContent=`${days[now.getDay()]}، ${now.getDate()} ${months[now.getMonth()]}`;
+}
+const wIcons={0:'☀️',1:'🌤️',2:'⛅',3:'☁️',45:'🌫️',48:'🌫️',51:'🌦️',53:'🌦️',55:'🌧️',61:'🌧️',63:'🌧️',65:'🌧️',71:'❄️',73:'❄️',75:'❄️',80:'🌦️',81:'🌧️',82:'⛈️',95:'⛈️',96:'⛈️',99:'⛈️'};
+async function loadWeather(){
+  try{
+    const pos=await new Promise((res,rej)=>navigator.geolocation.getCurrentPosition(res,rej,{timeout:6000}));
+    const {latitude:lat,longitude:lon}=pos.coords;
+    const w=await (await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`)).json();
+    el('w-icon').textContent=wIcons[w.current_weather.weathercode]||'🌡️';
+    el('w-deg').textContent=`${Math.round(w.current_weather.temperature)}°`;
+    try{ const g=await (await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=ar`)).json(); el('w-city').textContent=g.address?.city||g.address?.town||g.address?.state||'موقعك'; }catch{ el('w-city').textContent='موقعك'; }
+  }catch(e){ el('w-icon').textContent='📍'; el('w-deg').textContent='--°'; el('w-city').textContent='الطقس'; }
+}
+
+/* ============ INIT ============ */
+buildNav();
+renderHomeShell();
+renderNews();
+renderClubs();
+renderStars();
+renderLive();
+showPage('home');
+initNewsSlider();
+updateClock(); setInterval(updateClock,1000);
+loadWeather();
+</script>
+</body>
+</html>

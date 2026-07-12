@@ -1,0 +1,177 @@
+{
+ "clubs": {
+  "hilal": "https://r2.thesportsdb.com/images/media/team/badge/5trzvq1660439102.png",
+  "nassr": "https://r2.thesportsdb.com/images/media/team/badge/84yvqi1748524565.png",
+  "ittihad": "https://r2.thesportsdb.com/images/media/team/badge/lwjc661718210928.png",
+  "ahli": "https://r2.thesportsdb.com/images/media/team/badge/1bbtgb1755192301.png",
+  "shabab": "https://r2.thesportsdb.com/images/media/team/badge/x9pqf01618586414.png",
+  "fayha": "https://r2.thesportsdb.com/images/media/team/badge/jl3spp1677530565.png",
+  "qadisiyah": "https://r2.thesportsdb.com/images/media/team/badge/c3hmf51769917631.png",
+  "ettifaq": "https://r2.thesportsdb.com/images/media/team/badge/m272h51694761970.png",
+  "damac": "https://r2.thesportsdb.com/images/media/team/badge/z2l4w31677530963.png",
+  "khaleej": "https://r2.thesportsdb.com/images/media/team/badge/mvf6ga1755192630.png",
+  "fath": "https://r2.thesportsdb.com/images/media/team/badge/a5cjf41662659789.png",
+  "abha": "https://r2.thesportsdb.com/images/media/team/badge/e00pwe1677530619.png",
+  "raed": "https://r2.thesportsdb.com/images/media/team/badge/9vkdcc1677530862.png",
+  "orubah": "https://r2.thesportsdb.com/images/media/team/badge/y1rnl91721742609.png",
+  "wehda": "https://r2.thesportsdb.com/images/media/team/badge/j4nvuy1677530944.png",
+  "hazm": "https://r2.thesportsdb.com/images/media/team/badge/3uy27p1635871755.png",
+  "akhdoud": "",
+  "tai": "https://r2.thesportsdb.com/images/media/team/badge/gkyolg1739585901.png",
+  "barca": "https://r2.thesportsdb.com/images/media/team/badge/wq9sir1639406443.png",
+  "realmadrid": "https://r2.thesportsdb.com/images/media/team/badge/vwvwrw1473502969.png",
+  "intermiami": "https://r2.thesportsdb.com/images/media/team/badge/m4it3e1602103647.png",
+  "mancity": "https://r2.thesportsdb.com/images/media/team/badge/vwpvry1467462651.png",
+  "liverpool": "https://r2.thesportsdb.com/images/media/team/badge/kfaher1737969724.png",
+  "manutd": "https://r2.thesportsdb.com/images/media/team/badge/xzqdr11517660252.png",
+  "bayern": "https://r2.thesportsdb.com/images/media/team/badge/01ogkh1716960412.png",
+  "psg": "https://r2.thesportsdb.com/images/media/team/badge/has8b01763050866.png",
+  "juventus": "https://r2.thesportsdb.com/images/media/team/badge/uxf0gr1742983727.png",
+  "inter": "https://r2.thesportsdb.com/images/media/team/badge/ryhu6d1617113103.png",
+  "arsenal": "https://r2.thesportsdb.com/images/media/team/badge/uyhbfe1612467038.png",
+  "chelsea": "https://www.thesportsdb.com/images/media/team/badge/pbf4ul1782638263.png",
+  "atletico": "https://r2.thesportsdb.com/images/media/team/badge/0ulh3q1719984315.png",
+  "dortmund": "https://r2.thesportsdb.com/images/media/team/badge/tqo8ge1716960353.png",
+  "ajax": "https://r2.thesportsdb.com/images/media/team/badge/zg9tii1755495289.png",
+  "porto": "https://r2.thesportsdb.com/images/media/team/badge/xu47rb1628855600.png",
+  "benfica": "https://r2.thesportsdb.com/images/media/team/badge/hj4kyc1781152436.png",
+  "napoli": "https://r2.thesportsdb.com/images/media/team/badge/l8qyxv1742982541.png",
+  "roma": "https://r2.thesportsdb.com/images/media/team/badge/jwro2s1760820674.png",
+  "celtic": "https://r2.thesportsdb.com/images/media/team/badge/3uv1641758780002.png",
+  "milan": "https://r2.thesportsdb.com/images/media/team/badge/wvspur1448806617.png",
+  "tottenham": "https://r2.thesportsdb.com/images/media/team/badge/dfyfhl1604094109.png",
+  "newcastle": "https://r2.thesportsdb.com/images/media/team/badge/lhwuiz1621593302.png",
+  "sevilla": "https://r2.thesportsdb.com/images/media/team/badge/vpsqqx1473502977.png",
+  "marseille": "https://r2.thesportsdb.com/images/media/team/badge/c9p11e1779212305.png"
+ },
+ "players": {
+  "ronaldo": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/a19jje1761592498.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/bkre241600892282.jpg"
+  },
+  "messi": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/e0i2051750317027.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/kpfsvp1725295651.jpg"
+  },
+  "mbappe": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/h9u9vz1733653583.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/v08cj31778816426.jpg"
+  },
+  "neymar": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/av4ar01767782947.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/j60pdx1741319053.jpg"
+  },
+  "haaland": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/un3jr11769182465.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/bb1agj1727415216.jpg"
+  },
+  "benzema": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/7jdxvc1771665502.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/0bzer81704623143.jpg"
+  },
+  "vinicius": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/ejuxsh1750271859.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/lxf1he1771264845.jpg"
+  },
+  "salah": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/3blc581757088735.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/o7y57t1718438615.jpg"
+  },
+  "dybala": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/pjupvq1758815223.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/csf3qy1515954038.jpg"
+  },
+  "modric": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/msewdx1758892756.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/6j40781707595475.jpg"
+  },
+  "dejong": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/b8k6611726510284.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/fgse2c1771254363.jpg"
+  },
+  "bellingham": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/trk5271750271712.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/rfg8xd1771263826.jpg"
+  },
+  "pedri": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/srwppu1424795582.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/vvvc1w1626791033.jpg"
+  },
+  "lewy": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/xg2rl51762289740.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/1ogy3i1771254580.jpg"
+  },
+  "debruyne": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/o4flia1764089447.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/627wh81779038446.jpg"
+  },
+  "sane": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/bqdwlt1769178212.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/kymheu1779385557.jpg"
+  },
+  "kane": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/j4ouvd1756408895.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/0w9up71770542636.jpg"
+  },
+  "rashford": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/soi5zw1761512565.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/rb4hx61669799682.jpg"
+  },
+  "osimhen": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/lw0qcf1769177786.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/snhzzq1702566147.jpg"
+  },
+  "yamal": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/m9n4ja1761512633.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/ukerpq1692551634.jpg"
+  },
+  "rodri": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/0ml2zi1761148957.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/r6vlwa1545242094.jpg"
+  },
+  "saka": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/xfwok41769331816.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/axl31b1769332282.jpg"
+  },
+  "foden": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/lbn4sx1769182620.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/19o7yc1749157221.jpg"
+  },
+  "musiala": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/vbkv611756416067.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/y998n31779384099.jpg"
+  },
+  "wirtz": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/8t6bzo1757088899.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/k2mwrs1779386689.jpg"
+  },
+  "nicowilliams": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/8lg7941629190551.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/ubc6yn1629190504.jpg"
+  },
+  "lautaro": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/vwxq811759408924.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/y9j7e11719034723.jpg"
+  },
+  "leao": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/tlgrvf1758892567.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/m1sh9x1549742563.jpg"
+  },
+  "brunofernandes": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/jhasls1766826690.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/1kfayc1700821747.jpg"
+  },
+  "palmer": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/fn0pzc1757010119.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/r7yrsa1770541322.jpg"
+  },
+  "rodrygo": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/uzoghw1733653286.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/81sef31771265827.jpg"
+  },
+  "valverde": {
+   "cutout": "https://r2.thesportsdb.com/images/media/player/cutout/5249151768499204.png",
+   "thumb": "https://r2.thesportsdb.com/images/media/player/thumb/38ndp21771266409.jpg"
+  }
+ }
+}
