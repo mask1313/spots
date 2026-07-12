@@ -32,3 +32,18 @@ Single HTML file; free-tier APIs; auto-theme per source; MARCA default.
 - P1: MyMemory daily quota; add caching TTL/size cap.
 - P2: Tailwind build-time (remove CDN) for production hardening.
 - P2: Article images/thumbnails, category filters, dark/light toggle, share as image card.
+
+## Iteration 2 — Ultras Hub (الترا هب) Broadcast-TV Redesign (2025-12)
+- Full redesign to "Sports Broadcast Studio" theme (obsidian + LIVE red #FF2244 + gold, Changa font, Tailwind CDN) per design_agent guidelines. Delivered in-place in /app/Mod4-3.html (mirror at /app/frontend/public/index.html).
+- Translate-on-click: every NON-Arabic source (papers/clubs/players) opens via Google Translate Arabic proxy (glowing button + website links wrapped); Arabic sources get a direct "زيارة الموقع" button. Gated by AR_KEYS set.
+- Official CLUB LOGOS (TheSportsDB badges, 42/43; monogram fallback) + elegant PLAYER cutout photos (TheSportsDB, 32/32) embedded as static ASSETS map (no runtime rate-limit dependency).
+- Expanded data: +7 world papers (beIN, OneFootball, Tuttosport, Kicker, RMC, Guardian, Corriere), +5 world clubs (Milan, Tottenham, Newcastle, Sevilla, Marseille), +12 stars (Rodri, Saka, Foden, Musiala, Wirtz, Nico Williams, Lautaro, Leao, Bruno F., Palmer, Rodrygo, Valverde). Total: 31 papers, 43 clubs, 32 stars.
+- NEW pages: live MATCHES scoreboard (results+fixtures from TheSportsDB, badges/scores/times, 30-min cache) and a bottom LIVE news TICKER fed from fresh RSS.
+- Fresh trending news (rss2json: Sport360 + Al Jazeera + Marca). YouTube player: forced Arabic subs + piped.video geo-bypass toggle.
+- Tested: /app/test_reports/iteration_2.json — 100% frontend, no bugs.
+
+## Known limitations / backlog
+- Live TV channel video IDs are placeholders (need real live stream IDs).
+- Geo-bypass relies on public piped.video instances (flaky uptime) — add multi-instance fallback.
+- TheSportsDB free key returns limited fixtures per league; Al Akhdoud badge missing (monogram shown).
+- Tailwind via CDN (fine for demo; build step for production).
