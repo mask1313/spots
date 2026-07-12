@@ -155,7 +155,8 @@
   <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:#0a0a0b;border-bottom:1px solid rgba(255,255,255,0.1);flex-shrink:0">
     <button onclick="closeBrowser()" style="background:rgba(255,34,68,0.15);border:1px solid rgba(255,34,68,0.3);color:#FF2244;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center">✕</button>
     <div id="browserTitle" style="font-family:'Changa',sans-serif;font-size:14px;font-weight:700;color:#fff;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
-    <button onclick="openBrowserExternal()" style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);color:#FFC107;padding:0 12px;height:36px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:6px">↗ فتح خارجي</button>
+    <button onclick="translateBrowser()" style="background:rgba(0,87,255,0.15);border:1px solid rgba(0,87,255,0.3);color:#5b9fff;padding:0 10px;height:36px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:5px"><i class="fa-solid fa-language"></i> ترجم</button>
+    <button onclick="openBrowserExternal()" style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);color:#FFC107;padding:0 10px;height:36px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;font-family:'Tajawal',sans-serif;display:flex;align-items:center;gap:5px">↗ خارجي</button>
   </div>
   <iframe id="browserFrame" src="" style="flex:1;border:none;width:100%;height:100%;background:#fff"></iframe>
 </div>
@@ -457,6 +458,12 @@ function closeBrowser(){
 function openBrowserExternal(){
   if(_browserExtUrl) window.open(_browserExtUrl, '_blank');
 }
+function translateBrowser(){
+  if(_browserExtUrl){
+    const tUrl = 'https://translate.google.com/translate?sl=auto&tl=ar&u='+encodeURIComponent(_browserExtUrl);
+    window.open(tUrl, '_blank');
+  }
+}
 function isArabicKey(key){ return AR_KEYS.has(key); }
 function fav(url){ const d=domainOf(url); return d?`https://icons.duckduckgo.com/ip3/${d}.ico`:''; }
 function monogram(name){ return (name||'?').trim().charAt(0); }
@@ -493,9 +500,7 @@ function sectionTitle(main, sub){
 function newsCard(k, i){
   const d=DATA[k]; if(!d) return '';
   const site=getSite(k); const ar=isArabicKey(k);
-  const target = ar ? site : tUrl(site);
-  const label = ar ? d.name : d.name + ' (مترجم)';
-  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="openBrowser('${target}','${esc(label)}')">
+  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="openBrowser('${site}','${esc(d.name)}')">
     <div class="flex items-center justify-between gap-2">
       <img src="${fav(site)}" onerror="this.style.display='none'" class="w-9 h-9 rounded-md bg-white/5 p-1" alt=""/>
       <span class="text-xs text-white/40 font-bold">${FLAGS[k]||'🌍'}</span>
@@ -503,7 +508,7 @@ function newsCard(k, i){
     <div class="font-changa font-bold text-lg mt-3 leading-tight">${esc(d.name)}</div>
     ${ar
       ? '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-gold font-bold"><i class="fa-solid fa-check"></i> مصدر عربي</span>'
-      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-language"></i> يفتح مترجماً للعربية</span>'}
+      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-globe"></i> يفتح داخل التطبيق</span>'}
   </div>`;
 }
 function renderNews(){
@@ -626,12 +631,10 @@ function openInfo(key, type){
   el('info-name').textContent=d.name;
   el('info-sub').textContent=d.sub||'';
   const tEl=el('info-translate');
-  if(site&&!ar){
-    const label=type==='news'?'تصفح الصحيفة مترجمة بالكامل للعربية':type==='club'?'تصفح موقع النادي مترجماً للعربية':'تصفح الموقع مترجماً للعربية';
-    tEl.innerHTML=`<button class="tbtn" onclick="closeInfo();openBrowser('${tUrl(site)}','${esc(d.name)} — مترجم')"><i class="fa-solid fa-language"></i><span>${label}</span></button>`;
-    tEl.style.display='block';
-  } else if(site&&ar){
-    tEl.innerHTML=`<button class="tbtn" style="background:linear-gradient(135deg,#B38600,#FFC107)" onclick="closeInfo();openBrowser('${site}','${esc(d.name)}')"><i class="fa-solid fa-globe"></i><span>زيارة الموقع الرسمي</span></button>`;
+  if(site){
+    const label = ar ? 'زيارة الموقع الرسمي' : 'فتح الموقع داخل التطبيق';
+    const style = ar ? 'background:linear-gradient(135deg,#B38600,#FFC107)' : '';
+    tEl.innerHTML=`<button class="tbtn" style="${style}" onclick="closeInfo();openBrowser('${site}','${esc(d.name)}')"><i class="fa-solid fa-globe"></i><span>${label}</span></button>`;
     tEl.style.display='block';
   } else { tEl.innerHTML=''; tEl.style.display='none'; }
   el('info-links').innerHTML=(d.links||[]).map(l=>{
