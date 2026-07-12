@@ -523,6 +523,54 @@ async function translateText(text, fromLang){
 
 let _akhbarItems = [], _akhbarFilter = 'all', _akhbarLoaded = false;
 
+async function _fetchNewsFromClaude(){
+  const today = new Date().toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  const prompt = `أنت محلل أخبار رياضي. اليوم هو ${today}. 
+
+أعطني 18 خبراً رياضياً حديثاً ومتنوعاً عن كرة القدم بالتنسيق التالي بالضبط (JSON فقط بدون أي نص آخر):
+
+[
+  {
+    "title": "عنوان الخبر بالعربية",
+    "desc": "ملخص قصير للخبر بالعربية (جملتين)",
+    "source": "اسم المصدر (مثل: BBC Sport أو Goal أو سكاي سبورتس)",
+    "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+    "cat": "saudi أو euro أو world",
+    "link": "https://www.google.com/search?q=KEYWORDS"
+  }
+]
+
+التوزيع: 6 أخبار سعودية (دوري روشن، الهلال، النصر)، 6 أوروبية (البريميرليغ، الليغا، أبطال أوروبا)، 6 عالمية (انتقالات، كأس العالم، نجوم).
+اجعل الأخبار واقعية ومبنية على آخر الأحداث التي تعرفها. للـ link استخدم رابط بحث Google بكلمات مفتاحية مناسبة.`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2000,
+      messages: [{role: 'user', content: prompt}]
+    })
+  });
+  const data = await res.json();
+  const text = data?.content?.[0]?.text || '[]';
+  const clean = text.replace(/```json|```/g,'').trim();
+  const news = JSON.parse(clean);
+  return news.map((it,i)=>({
+    title: it.title||'',
+    desc: it.desc||'',
+    link: it.link||'#',
+    img: '',
+    date: new Date().toISOString(),
+    source: it.source||'',
+    flag: it.flag||'🌍',
+    lang: 'ar',
+    cat: it.cat||'world',
+    titleAr: it.title||'',
+    descAr: it.desc||'',
+  }));
+}
+
 async function renderAkhbar(){
   const sec = el('page-akhbar');
   if(_akhbarLoaded){ _renderAkhbarList(); return; }
@@ -541,10 +589,10 @@ async function renderAkhbar(){
       <span style="font-size:14px">جاري تحميل الأخبار...</span>
     </div>`;
 
-  // تحقق من الـ cache (صالح لمدة 15 دقيقة)
+  // تحقق من الـ cache (صالح لمدة 30 دقيقة)
   try{
     const cached = JSON.parse(localStorage.getItem('uh_akhbar')||'null');
-    if(cached && Date.now()-cached.t < 900000){
+    if(cached && Date.now()-cached.t < 1800000){
       _akhbarItems = cached.d;
       _akhbarLoaded = true;
       el('akhbar-loading').style.display='none';
@@ -553,49 +601,17 @@ async function renderAkhbar(){
     }
   }catch(e){}
 
-  // جلب RSS
-  const items = [];
-  // جلب كل الـ feeds بالتوازي (بدل واحدة تلو الأخرى)
-  const results = await Promise.allSettled(
-    RSS_FEEDS.map(feed => _fetchRSS(feed.url).then(its => ({feed, its})))
-  );
-
-  for(const r of results){
-    if(r.status !== 'fulfilled') continue;
-    const {feed, its} = r.value;
-    its.forEach(it=>{
-      const img = it.thumbnail || it.enclosure?.link || it.media?.content?.url || '';
-      items.push({
-        title: (it.title||'').trim(),
-        desc: (it.description||'').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim().slice(0,180),
-        link: it.link||'#',
-        img: img,
-        date: it.pubDate||'',
-        source: feed.name,
-        flag: feed.flag,
-        lang: feed.lang,
-        titleAr: '',
-        descAr: '',
-      });
-    });
+  // جلب الأخبار من Claude API
+  try{
+    _akhbarItems = await _fetchNewsFromClaude();
+    try{ localStorage.setItem('uh_akhbar', JSON.stringify({t:Date.now(), d:_akhbarItems})); }catch(e){}
+  }catch(e){
+    _akhbarItems = [];
   }
 
-  // ترتيب حسب التاريخ
-  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-
-  _akhbarItems = items
-    .filter((v,i,a)=>a.findIndex(x=>x.title===v.title)===i)
-    .filter(it=>!it.date || new Date(it.date).getTime() > sevenDaysAgo)
-    .map(it=>({...it, desc: it.desc.replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim()}))
-    .sort((a,b)=>new Date(b.date)-new Date(a.date))
-    .slice(0,50);
-
   _akhbarLoaded = true;
-  // حفظ في cache
-  try{ localStorage.setItem('uh_akhbar', JSON.stringify({t:Date.now(), d:_akhbarItems})); }catch(e){}
   el('akhbar-loading').style.display='none';
   _renderAkhbarList();
-  _autoTranslateTitles();
 }
 
 async function _autoTranslateTitles(){
@@ -634,9 +650,9 @@ const WORLD_SOURCES  = new Set(['انتقالات','كأس العالم','ميس
 function _renderAkhbarList(){
   const list = el('akhbar-list'); if(!list) return;
   let filtered = _akhbarItems;
-  if(_akhbarFilter==='saudi') filtered = _akhbarItems.filter(it=>SAUDI_SOURCES.has(it.source));
-  else if(_akhbarFilter==='euro') filtered = _akhbarItems.filter(it=>EURO_SOURCES.has(it.source));
-  else if(_akhbarFilter==='world') filtered = _akhbarItems.filter(it=>WORLD_SOURCES.has(it.source));
+  if(_akhbarFilter==='saudi') filtered = _akhbarItems.filter(it=>it.cat==='saudi');
+  else if(_akhbarFilter==='euro')  filtered = _akhbarItems.filter(it=>it.cat==='euro');
+  else if(_akhbarFilter==='world') filtered = _akhbarItems.filter(it=>it.cat==='world');
   if(!filtered.length){ list.innerHTML='<p style="color:rgba(255,255,255,0.3);text-align:center;padding:40px">لا توجد أخبار في هذا التصنيف</p>'; return; }
 
   list.innerHTML = filtered.map((it,i)=>{
