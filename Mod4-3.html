@@ -545,25 +545,29 @@ async function renderAkhbar(){
 
   // جلب RSS
   const items = [];
-  for(const feed of RSS_FEEDS){
-    try{
-      const items2 = await _fetchRSS(feed.url);
-      items2.forEach(it=>{
-          const img = it.thumbnail || it.enclosure?.link || it.media?.content?.url || '';
-          items.push({
-            title: (it.title||'').trim(),
-            desc: (it.description||'').replace(/<[^>]+>/g,'').trim().slice(0,180),
-            link: it.link||'#',
-            img: img,
-            date: it.pubDate||'',
-            source: feed.name,
-            flag: feed.flag,
-            lang: feed.lang,
-            titleAr: '',
-            descAr: '',
-          });
-        });
-    }catch(e){}
+  // جلب كل الـ feeds بالتوازي (بدل واحدة تلو الأخرى)
+  const results = await Promise.allSettled(
+    RSS_FEEDS.map(feed => _fetchRSS(feed.url).then(its => ({feed, its})))
+  );
+
+  for(const r of results){
+    if(r.status !== 'fulfilled') continue;
+    const {feed, its} = r.value;
+    its.forEach(it=>{
+      const img = it.thumbnail || it.enclosure?.link || it.media?.content?.url || '';
+      items.push({
+        title: (it.title||'').trim(),
+        desc: (it.description||'').replace(/<[^>]+>/g,'').trim().slice(0,180),
+        link: it.link||'#',
+        img: img,
+        date: it.pubDate||'',
+        source: feed.name,
+        flag: feed.flag,
+        lang: feed.lang,
+        titleAr: '',
+        descAr: '',
+      });
+    });
   }
 
   // ترتيب حسب التاريخ
@@ -575,6 +579,26 @@ async function renderAkhbar(){
   _akhbarLoaded = true;
   el('akhbar-loading').style.display='none';
   _renderAkhbarList();
+
+  // ترجمة تلقائية للعناوين غير العربية في الخلفية
+  _autoTranslateTitles();
+}
+
+async function _autoTranslateTitles(){
+  // نترجم العناوين على دفعات (5 في نفس الوقت)
+  const nonAr = _akhbarItems.filter(it=>it.lang!=='ar' && !it.titleAr);
+  const batchSize = 5;
+  for(let i=0; i<nonAr.length; i+=batchSize){
+    const batch = nonAr.slice(i, i+batchSize);
+    await Promise.allSettled(batch.map(async it=>{
+      try{
+        it.titleAr = await _myMemoryTranslate(it.title, it.lang);
+      }catch(e){}
+    }));
+    // أعد الرسم بعد كل دفعة
+    _renderAkhbarList();
+    await new Promise(r=>setTimeout(r,300));
+  }
 }
 
 function filterAkhbar(cat){
