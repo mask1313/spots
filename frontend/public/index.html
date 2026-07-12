@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>الترا هب • ULTRAS HUB — أستوديو كرة القدم</title>
+<title>ULTRAS HUB — أستوديو كرة القدم</title>
 <meta name="description" content="أستوديو البث الرياضي: أخبار، صحف عالمية مترجمة، أندية، نجوم، نتائج مباشرة وبث حي" />
 
 <script src="https://cdn.tailwindcss.com"></script>
@@ -104,32 +104,31 @@
 </style>
 </head>
 
-<body class="relative pb-16">
+<body class="relative pb-10">
 <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
   <!-- ===== HEADER ===== -->
   <header class="pt-6 pb-3 flex items-center justify-between gap-4 flex-wrap">
     <div class="flex items-center gap-3">
       <div class="w-14 h-14 shrink-0">
-        <svg viewBox="0 0 62 62" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
-          <defs>
-            <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFD86B"/><stop offset="100%" stop-color="#FFC107"/></linearGradient>
-            <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FF2244"/><stop offset="100%" stop-color="#B3001B"/></linearGradient>
-          </defs>
-          <path d="M31 3 L54 13 L54 33 C54 45 43 55 31 59 C19 55 8 45 8 33 L8 13 Z" fill="url(#lg2)" opacity="0.18"/>
-          <path d="M31 3 L54 13 L54 33 C54 45 43 55 31 59 C19 55 8 45 8 33 L8 13 Z" stroke="url(#lg1)" stroke-width="1.6" fill="none"/>
-          <circle cx="31" cy="31" r="12" fill="none" stroke="url(#lg1)" stroke-width="1.6"/>
-          <circle cx="31" cy="31" r="4" fill="url(#lg1)"/>
-          <path d="M31 19 L31 43 M19 31 L43 31" stroke="url(#lg1)" stroke-width="0.8" opacity="0.4"/>
-          <circle cx="19" cy="17" r="1.6" fill="#FFC107"/><circle cx="43" cy="17" r="1.6" fill="#FFC107"/><circle cx="31" cy="11" r="1.6" fill="#FF2244"/>
+        <svg viewBox="0 0 64 64" class="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <defs><linearGradient id="uhg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF2244"/><stop offset="1" stop-color="#7a0012"/></linearGradient></defs>
+          <rect x="4" y="4" width="56" height="56" rx="16" fill="url(#uhg)"/>
+          <rect x="4" y="4" width="56" height="56" rx="16" fill="none" stroke="#FFC107" stroke-width="1.5" opacity=".85"/>
+          <circle cx="29" cy="34" r="13" fill="#fff"/>
+          <circle cx="29" cy="34" r="13" fill="none" stroke="#0A0A0B" stroke-width="1.1" opacity=".2"/>
+          <path d="M29 26 l4.7 3.4 -1.8 5.5 h-5.8 l-1.8-5.5 Z" fill="#0A0A0B"/>
+          <path d="M29 24.4 v3.2 M21.3 30.4 l2.7 2 M36.7 30.4 l-2.7 2 M24.4 40.3 l1.8-2.7 M33.6 40.3 l-1.8-2.7" stroke="#0A0A0B" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+          <path d="M44 15 a9 9 0 0 1 6.5 6.5" fill="none" stroke="#FFC107" stroke-width="2.2" stroke-linecap="round"/>
+          <path d="M44 10 a14 14 0 0 1 10 10" fill="none" stroke="#FFC107" stroke-width="2.2" stroke-linecap="round" opacity=".65"/>
         </svg>
       </div>
       <div>
         <div class="flex items-center gap-2">
-          <h1 class="font-changa text-2xl sm:text-3xl font-800 font-extrabold tracking-tight leading-none">الترا هب</h1>
+          <h1 class="font-changa text-2xl sm:text-3xl font-extrabold tracking-tight leading-none">ULTRAS HUB</h1>
           <span class="text-live text-[10px] font-changa font-bold border border-live/60 rounded px-1.5 py-0.5 flex items-center gap-1"><span class="live-dot"></span>LIVE</span>
         </div>
-        <div class="text-[10px] tracking-[.35em] text-gold font-changa mt-0.5">ULTRAS HUB • STUDIO</div>
+        <div class="text-[10px] tracking-[.35em] text-gold font-changa mt-0.5">FOOTBALL STUDIO</div>
       </div>
     </div>
 
@@ -181,11 +180,7 @@
   </div>
 </div>
 
-<!-- ===== NEWS TICKER ===== -->
-<div class="ticker-wrap" data-testid="news-ticker">
-  <div class="ticker-badge"><span class="live-dot"></span> عاجل</div>
-  <div class="ticker-track"><div class="ticker-move" id="ticker-move"><span class="ticker-item">جاري تحميل آخر الأخبار...</span></div></div>
-</div>
+<!-- ===== NEWS TICKER (removed) ===== -->
 
 <script>
 /* ============ ASSETS (شعارات الأندية + صور اللاعبين) ============ */
@@ -1276,16 +1271,21 @@ const STATIC_NEWS=[
 async function initNewsSlider(){
   const track=el('ns-track'), dots=el('ns-dots');
   let items=[];
+  const GN='https://news.google.com/rss/search?q='+encodeURIComponent('كرة القدم')+'&hl=ar&gl=SA&ceid=SA:ar';
   const feeds=[
+    {rss:GN, name:'أخبار عربية'},
     {rss:'https://www.aljazeera.net/aljazeerarss/sports', name:'الجزيرة رياضة'},
     {rss:'https://e00-marca.uecdn.es/rss/futbol/primera-division.xml', name:'ماركا'},
     {rss:'https://feeds.bbci.co.uk/sport/football/rss.xml', name:'BBC Football'},
-    {rss:'https://www.skysports.com/rss/11095', name:'Sky Sports'},
   ];
   try{
     for(const f of feeds){
       const j=await fetchJSON(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(f.rss)}`);
-      if(j && j.status==='ok' && j.items){ j.items.forEach(it=>{ const t=(it.title||'').trim(); if(t.length>8) items.push({t, s:f.name, l:it.link||'#', img:it.thumbnail||it.enclosure?.link||null, d:Date.parse(it.pubDate||'')||0}); }); }
+      if(j && j.status==='ok' && j.items){ j.items.forEach(it=>{
+        let t=(it.title||'').trim(); let s=f.name;
+        if(f.name==='أخبار عربية' && t.includes(' - ')){ const p=t.split(' - '); s=p.pop().trim(); t=p.join(' - ').trim(); }
+        if(t.length>8) items.push({t, s, l:it.link||'#', img:it.thumbnail||it.enclosure?.link||null, d:Date.parse(it.pubDate||'')||0});
+      }); }
     }
   }catch(e){}
   // إزالة التكرار + ترتيب حسب الأحدث
@@ -1310,10 +1310,6 @@ async function initNewsSlider(){
   vp.addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
   vp.addEventListener('touchend',e=>{ const d=tx-e.changedTouches[0].clientX; if(Math.abs(d)>40) d>0?nsNext():nsPrev(); },{passive:true});
   resetAuto();
-
-  // TICKER
-  const tickerItems = items.map(it=>`<span class="ticker-item">${esc(it.t)}</span>`).join('');
-  el('ticker-move').innerHTML = tickerItems + tickerItems; // duplicate for seamless loop
 }
 
 /* ============ CLOCK ============ */
