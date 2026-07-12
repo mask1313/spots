@@ -493,11 +493,11 @@ async function _fetchRSS(feedUrl){
 
 /* ============ RSS FEEDS للأخبار الداخلية ============ */
 const RSS_FEEDS = [
-  {name:'أخبار الكرة',  flag:'🌍', url:'https://news.google.com/rss/search?q=football+soccer&hl=ar&gl=SA&ceid=SA:ar',   lang:'ar'},
-  {name:'البريميرليغ',  flag:'🇬🇧', url:'https://news.google.com/rss/search?q=premier+league&hl=ar&gl=SA&ceid=SA:ar',  lang:'ar'},
-  {name:'دوري روشن',    flag:'🇸🇦', url:'https://news.google.com/rss/search?q=دوري+روشن+السعودي&hl=ar&gl=SA&ceid=SA:ar',lang:'ar'},
-  {name:'دوري الأبطال', flag:'⭐',  url:'https://news.google.com/rss/search?q=champions+league&hl=ar&gl=SA&ceid=SA:ar', lang:'ar'},
-  {name:'انتقالات',     flag:'💰',  url:'https://news.google.com/rss/search?q=صفقات+انتقالات+كرة+القدم&hl=ar&gl=SA&ceid=SA:ar', lang:'ar'},
+  {name:'كرة القدم',    flag:'⚽', url:'https://news.google.com/rss/topics/CAAqKggKIiRDQkFTRlFvSUwyMHZNRFp1ZEdvU0JXVnVMVWRDR2dKVFV5Z0FQAQ?hl=ar&gl=SA&ceid=SA:ar', lang:'ar'},
+  {name:'رياضة',        flag:'🏆', url:'https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNR1p2Y0hNU0JXVnVMVWRDR2dKVFV5Z0FQAQ?hl=ar&gl=SA&ceid=SA:ar', lang:'ar'},
+  {name:'الهلال والنصر',flag:'🇸🇦', url:'https://news.google.com/rss/search?q=الهلال+OR+النصر+OR+الاتحاد+OR+الاتفاق&hl=ar&gl=SA&ceid=SA:ar&when=1d', lang:'ar'},
+  {name:'دوري روشن',    flag:'🇸🇦', url:'https://news.google.com/rss/search?q=دوري+روشن&hl=ar&gl=SA&ceid=SA:ar&when=3d', lang:'ar'},
+  {name:'مباريات اليوم',flag:'📅', url:'https://news.google.com/rss/search?q=مباريات+اليوم+كرة+القدم&hl=ar&gl=SA&ceid=SA:ar&when=1d', lang:'ar'},
 ];
 
 /* مفتاح ترجمة Anthropic Claude عبر API */
@@ -560,7 +560,7 @@ async function renderAkhbar(){
       const img = it.thumbnail || it.enclosure?.link || it.media?.content?.url || '';
       items.push({
         title: (it.title||'').trim(),
-        desc: (it.description||'').replace(/<[^>]+>/g,'').trim().slice(0,180),
+        desc: (it.description||'').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim().slice(0,180),
         link: it.link||'#',
         img: img,
         date: it.pubDate||'',
@@ -574,10 +574,14 @@ async function renderAkhbar(){
   }
 
   // ترتيب حسب التاريخ
+  const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
   _akhbarItems = items
     .filter((v,i,a)=>a.findIndex(x=>x.title===v.title)===i)
+    .filter(it=>!it.date || new Date(it.date).getTime() > sevenDaysAgo)
+    .map(it=>({...it, desc: it.desc.replace(/&nbsp;/g,' ').replace(/\s+/g,' ').trim()}))
     .sort((a,b)=>new Date(b.date)-new Date(a.date))
-    .slice(0,60);
+    .slice(0,50);
 
   _akhbarLoaded = true;
   // حفظ في cache
