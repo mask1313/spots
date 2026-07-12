@@ -523,52 +523,41 @@ async function translateText(text, fromLang){
 
 let _akhbarItems = [], _akhbarFilter = 'all', _akhbarLoaded = false;
 
+const NEWSAPI_KEY = '6ac2a2bc29374c0f98dc82b524cb303d';
+
 async function _fetchNewsFromClaude(){
-  const today = new Date().toLocaleDateString('ar-SA', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-  const prompt = `أنت محلل أخبار رياضي. اليوم هو ${today}. 
+  const results = await Promise.allSettled([
+    fetch(`https://newsapi.org/v2/everything?q=دوري+روشن+OR+الهلال+OR+النصر&language=ar&sortBy=publishedAt&pageSize=10&apiKey=${NEWSAPI_KEY}`).then(r=>r.json()),
+    fetch(`https://newsapi.org/v2/everything?q=premier+league+OR+laliga+OR+champions+league&language=ar&sortBy=publishedAt&pageSize=10&apiKey=${NEWSAPI_KEY}`).then(r=>r.json()),
+    fetch(`https://newsapi.org/v2/everything?q=كرة+القدم+انتقالات&language=ar&sortBy=publishedAt&pageSize=8&apiKey=${NEWSAPI_KEY}`).then(r=>r.json()),
+  ]);
 
-أعطني 18 خبراً رياضياً حديثاً ومتنوعاً عن كرة القدم بالتنسيق التالي بالضبط (JSON فقط بدون أي نص آخر):
+  const catMap = ['saudi','euro','world'];
+  const items = [];
 
-[
-  {
-    "title": "عنوان الخبر بالعربية",
-    "desc": "ملخص قصير للخبر بالعربية (جملتين)",
-    "source": "اسم المصدر (مثل: BBC Sport أو Goal أو سكاي سبورتس)",
-    "flag": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
-    "cat": "saudi أو euro أو world",
-    "link": "https://www.google.com/search?q=KEYWORDS"
-  }
-]
-
-التوزيع: 6 أخبار سعودية (دوري روشن، الهلال، النصر)، 6 أوروبية (البريميرليغ، الليغا، أبطال أوروبا)، 6 عالمية (انتقالات، كأس العالم، نجوم).
-اجعل الأخبار واقعية ومبنية على آخر الأحداث التي تعرفها. للـ link استخدم رابط بحث Google بكلمات مفتاحية مناسبة.`;
-
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      max_tokens: 2000,
-      messages: [{role: 'user', content: prompt}]
-    })
+  results.forEach((r,i)=>{
+    if(r.status!=='fulfilled') return;
+    const d = r.value;
+    if(d.status!=='ok' || !d.articles) return;
+    d.articles.forEach(a=>{
+      if(!a.title || a.title==='[Removed]') return;
+      items.push({
+        title: a.title,
+        desc: (a.description||'').slice(0,180),
+        link: a.url||'#',
+        img: a.urlToImage||'',
+        date: a.publishedAt||'',
+        source: a.source?.name||'',
+        flag: i===0?'🇸🇦':i===1?'🌍':'💰',
+        lang: 'ar',
+        cat: catMap[i],
+        titleAr: a.title,
+        descAr: (a.description||'').slice(0,180),
+      });
+    });
   });
-  const data = await res.json();
-  const text = data?.content?.[0]?.text || '[]';
-  const clean = text.replace(/```json|```/g,'').trim();
-  const news = JSON.parse(clean);
-  return news.map((it,i)=>({
-    title: it.title||'',
-    desc: it.desc||'',
-    link: it.link||'#',
-    img: '',
-    date: new Date().toISOString(),
-    source: it.source||'',
-    flag: it.flag||'🌍',
-    lang: 'ar',
-    cat: it.cat||'world',
-    titleAr: it.title||'',
-    descAr: it.desc||'',
-  }));
+
+  return items.sort((a,b)=>new Date(b.date)-new Date(a.date));
 }
 
 async function renderAkhbar(){
