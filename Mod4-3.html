@@ -744,46 +744,89 @@ const NEWS_META = {
   nujoomfc:      {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1551958219-acbc6c25fcd1?w=400&q=80'},
 };
 
+/* معرّفات frontpages.com لكل صحيفة */
+const FRONTPAGES = {
+  marca:         'marca',
+  as:            'as',
+  lequipe:       'l-equipe',
+  gazzetta:      'la-gazzetta-dello-sport',
+  bbcsport:      'bbc-sport',
+  bild:          'bild',
+  sport:         'sport-es',
+  mundodeportivo:'mundo-deportivo',
+  tuttosport:    'tuttosport',
+  kicker:        'kicker',
+  guardian:      'the-guardian',
+  corriere:      'corriere-dello-sport',
+  skysports:     'morning-star-sport',
+  espn:          'usa-today-sports',
+};
+
+// cache الأغلفة
+const _coverCache = {};
+
+async function loadCover(k){
+  const fp = FRONTPAGES[k]; if(!fp) return;
+  if(_coverCache[k]) return;
+  try{
+    const r = await fetch(`${WORKER_URL}/frontpage?np=${fp}`);
+    const d = await r.json();
+    if(d.img){
+      _coverCache[k] = d.img;
+      const img = document.getElementById('nc-'+k);
+      if(img){ img.src = d.img; }
+    }
+  }catch(e){}
+}
+
+function kioskoCover(k){
+  // نعيد صورة Unsplash كـ fallback ثم نحدّث من Worker
+  const meta = NEWS_META[k] || {};
+  setTimeout(()=>loadCover(k), 100);
+  return meta.img || '';
+}
+
 function newsCard(k, i){
   const d=DATA[k]; if(!d) return '';
   const site=getSite(k); const ar=isArabicKey(k);
   const meta = NEWS_META[k] || {country:'', color:'#1a1c20', img:''};
-  const logo = fav(site);
-  const openAction = ar ? `window.open('${site}','_blank')` : `openBrowserTranslated('${site}')`;
+  const cover = kioskoCover(k);
+  const fallback = meta.img || '';
+  const openAction = `window.open('${site}','_blank')`;
 
-  return `<div class="lift cursor-pointer fade-up" style="animation-delay:${Math.min(i*35,400)}ms;border-radius:16px;overflow:hidden;background:#121316;border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column" onclick="${openAction}">
-    <!-- صورة الخلفية -->
-    <div style="height:110px;position:relative;overflow:hidden">
-      <div style="position:absolute;inset:0;background-image:url('${meta.img}');background-size:cover;background-position:center;filter:brightness(0.55)"></div>
-      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)"></div>
-      <!-- شعار الصحيفة -->
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-        <img src="${logo}" style="max-height:44px;max-width:110px;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.8));opacity:0.95" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-        <div style="display:none;font-family:'Changa',sans-serif;font-size:18px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.8);text-align:center;padding:0 8px">${esc(d.name)}</div>
+  return `<div class="lift cursor-pointer fade-up" style="animation-delay:${Math.min(i*35,400)}ms;border-radius:16px;overflow:hidden;background:#0a0a0b;border:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,0.5)" onclick="${openAction}">
+    <div style="position:relative;aspect-ratio:3/4;overflow:hidden;background:#1a1c20">
+      <img id="nc-${k}"
+        src="${cover}"
+        style="width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s"
+        onerror="this.src='${fallback}';this.style.objectFit='cover'"
+        loading="lazy"
+        onmouseover="this.style.transform='scale(1.05)'"
+        onmouseout="this.style.transform='scale(1)'"
+      />
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.1) 50%,transparent 100%)"></div>
+      <div style="position:absolute;bottom:0;right:0;left:0;padding:10px 12px">
+        <div style="font-family:'Changa',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1.2;text-shadow:0 1px 4px rgba(0,0,0,0.8)">${esc(d.name)}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px">${meta.country} ${FLAGS[k]||''}</div>
       </div>
-      <!-- علامة البلد -->
-      <div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.6);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.85)">${meta.country}</div>
-    </div>
-    <!-- اسم الصحيفة -->
-    <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:4px">
-      <div style="font-family:'Changa',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.name)}</div>
-      <span style="flex-shrink:0;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;${ar
-        ? 'background:rgba(255,193,7,0.15);color:#FFC107'
-        : 'background:rgba(255,34,68,0.12);color:#FF6680'}">
-        ${ar ? '🇸🇦' : '🌐'}
-      </span>
+      <div style="position:absolute;top:8px;left:8px;backdrop-filter:blur(6px);border-radius:6px;padding:2px 8px;font-size:9px;font-weight:700;${ar
+        ? 'background:rgba(212,175,55,0.8);color:#000'
+        : 'background:rgba(255,34,68,0.8);color:#fff'}">
+        ${ar ? '🇸🇦 عربي' : '🌐 ترجم'}
+      </div>
     </div>
   </div>`;
 }
+
 function renderNews(){
   el('page-news').innerHTML =
-    sectionTitle('الصحف العالمية','اضغط على أي صحيفة لفتحها مترجمة بالكامل للعربية')+
+    sectionTitle('الصحف العالمية','أغلفة اليوم — اضغط للفتح واستخدم ترجمة المتصفح')+
     `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-10">${NEWS_WORLD.map(newsCard).join('')}</div>`+
     sectionTitle('صحف عربية','مصادر عربية مباشرة')+
     `<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">${NEWS_AR.map(newsCard).join('')}</div>`;
 }
 
-function clubCard(k, i){
+
   const d=DATA[k]; if(!d) return '';
   const badge=ASSETS.clubs[k];
   const logo = badge
