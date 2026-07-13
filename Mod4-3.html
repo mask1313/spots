@@ -744,31 +744,52 @@ const NEWS_META = {
   nujoomfc:      {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1551958219-acbc6c25fcd1?w=400&q=80'},
 };
 
-/* صور أغلفة الصحف الحقيقية - ثابتة وموثوقة */
-const NEWSPAPER_COVERS = {
-  skysports:     'https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/Sky_Sports_logo_2020.svg/400px-Sky_Sports_logo_2020.svg.png',
-  marca:         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Marca_portada.jpg/300px-Marca_portada.jpg',
-  as:            'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/AS_portada.jpg/300px-AS_portada.jpg',
-  lequipe:       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/L%27%C3%89quipe_logo.svg/400px-L%27%C3%89quipe_logo.svg.png',
-  gazzetta:      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Gazzetta_dello_Sport_copertina.jpg/300px-Gazzetta_dello_Sport_copertina.jpg',
-  bbcsport:      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/BBC_Sport_2022.svg/400px-BBC_Sport_2022.svg.png',
-  goal:          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Goal.com_logo.svg/400px-Goal.com_logo.svg.png',
-  beinsports:    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/BeIN_Sports_logo.svg/400px-BeIN_Sports_logo.svg.png',
-  onefootball:   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/OneFootball_logo.svg/400px-OneFootball_logo.svg.png',
-  athletic:      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/The_Athletic_Logo.svg/400px-The_Athletic_Logo.svg.png',
-  bild:          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Bild_logo.svg/400px-Bild_logo.svg.png',
-  sport:         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Diari_Sport_logo.svg/400px-Diari_Sport_logo.svg.png',
-  mundodeportivo:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Mundo_Deportivo_logo.svg/400px-Mundo_Deportivo_logo.svg.png',
-  tuttosport:    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Tuttosport_logo.svg/400px-Tuttosport_logo.svg.png',
-  kicker:        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Kicker_Sportmagazin_Logo.svg/400px-Kicker_Sportmagazin_Logo.svg.png',
-  rmcsport:      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/RMC_Sport_logo.svg/400px-RMC_Sport_logo.svg.png',
-  guardian:      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/The_Guardian.svg/400px-The_Guardian.svg.png',
-  corriere:      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Gazzetta_dello_Sport_Logo.svg/400px-Gazzetta_dello_Sport_Logo.svg.png',
-  transfermarkt: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Transfermarkt_logo.svg/400px-Transfermarkt_logo.svg.png',
-  espn:          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/400px-ESPN_wordmark.svg.png',
+/* معرّفات kiosko.net لكل صحيفة */
+const KIOSKO_IDS = {
+  marca:         {cc:'es', id:'marca'},
+  as:            {cc:'es', id:'as'},
+  lequipe:       {cc:'fr', id:'lequipe'},
+  gazzetta:      {cc:'it', id:'gazzetta_dello_sport'},
+  bbcsport:      {cc:'gb', id:'bbc_sport'},
+  bild:          {cc:'de', id:'bild'},
+  sport:         {cc:'es', id:'sport'},
+  mundodeportivo:{cc:'es', id:'mundo_deportivo'},
+  tuttosport:    {cc:'it', id:'tuttosport'},
+  kicker:        {cc:'de', id:'kicker'},
+  guardian:      {cc:'gb', id:'the_guardian'},
+  corriere:      {cc:'it', id:'corriere_dello_sport'},
+  skysports:     {cc:'gb', id:'sky_sports'},
+  espn:          {cc:'us', id:'espn'},
 };
 
+const _kioskoCoverCache = {};
+let _kioskoCoverLoading = false;
+
+async function loadKioskoCovers(){
+  if(_kioskoCoverLoading) return;
+  _kioskoCoverLoading = true;
+  // جلب كل الأغلفة بالتوازي
+  await Promise.allSettled(
+    Object.entries(KIOSKO_IDS).map(async ([k, {cc, id}])=>{
+      try{
+        const r = await fetch(`${WORKER_URL}/kiosko?cc=${cc}&id=${id}`);
+        const d = await r.json();
+        if(d.img){
+          _kioskoCoverCache[k] = d.img;
+          const img = document.getElementById('nc-'+k);
+          if(img){
+            img.src = d.img;
+            img.style.objectFit = 'cover';
+            img.style.filter = 'none';
+          }
+        }
+      }catch(e){}
+    })
+  );
+}
+
 function kioskoCover(k){
+  setTimeout(()=>{ if(!_kioskoCoverLoading) loadKioskoCovers(); }, 300);
   return NEWSPAPER_COVERS[k] || (NEWS_META[k]||{}).img || '';
 }
 
@@ -786,10 +807,10 @@ function newsCard(k, i){
       <div style="position:absolute;inset:0;background:linear-gradient(135deg,${meta.color}ff 0%,${meta.color}99 100%)"></div>
       <!-- نمط هندسي -->
       <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.04) 0,rgba(255,255,255,0.04) 1px,transparent 0,transparent 50%);background-size:20px 20px"></div>
-      <!-- شعار الصحيفة -->
+      <!-- شعار الصحيفة / غلاف يتحدث تلقائياً -->
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px">
-        <img src="${logo}"
-          style="max-width:80%;max-height:60%;object-fit:contain;filter:brightness(0) invert(1);drop-shadow(0 4px 12px rgba(0,0,0,0.5));opacity:0.95"
+        <img id="nc-${k}" src="${kioskoCover(k)}"
+          style="max-width:85%;max-height:65%;object-fit:contain;filter:brightness(0) invert(1);opacity:0.95;transition:all .5s"
           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
         />
         <div style="display:none;font-family:'Changa',sans-serif;font-size:28px;font-weight:900;color:#fff;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,0.5)">${esc(d.name)}</div>
