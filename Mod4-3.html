@@ -744,84 +744,65 @@ const NEWS_META = {
   nujoomfc:      {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1551958219-acbc6c25fcd1?w=400&q=80'},
 };
 
-/* معرّفات frontpages.com لكل صحيفة */
-const FRONTPAGES = {
-  marca:         {id:'marca',              alt:'marca'},
-  as:            {id:'as',                 alt:'asmadrid'},
-  lequipe:       {id:'l-equipe',           alt:'lequipe'},
-  gazzetta:      {id:'la-gazzetta-dello-sport', alt:'lagazzettadellosport'},
-  bbcsport:      {id:'bbc-sport',          alt:'bbcsport'},
-  bild:          {id:'bild',               alt:'bild'},
-  sport:         {id:'sport-es',           alt:'sportbarcelona'},
-  mundodeportivo:{id:'mundo-deportivo',    alt:'mundodeportivo'},
-  tuttosport:    {id:'tuttosport',         alt:'tuttosport'},
-  kicker:        {id:'kicker',             alt:'kicker'},
-  guardian:      {id:'the-guardian',       alt:'theguardian'},
-  corriere:      {id:'corriere-dello-sport', alt:'corrieredellosport'},
-  skysports:     {id:'morning-star-sport', alt:'morningstar'},
-  espn:          {id:'usa-today-sports',   alt:'usatodaysports'},
+/* صور أغلفة الصحف الحقيقية - ثابتة وموثوقة */
+const NEWSPAPER_COVERS = {
+  skysports:     'https://upload.wikimedia.org/wikipedia/en/thumb/e/e5/Sky_Sports_logo_2020.svg/400px-Sky_Sports_logo_2020.svg.png',
+  marca:         'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/Marca_portada.jpg/300px-Marca_portada.jpg',
+  as:            'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/AS_portada.jpg/300px-AS_portada.jpg',
+  lequipe:       'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/L%27%C3%89quipe_logo.svg/400px-L%27%C3%89quipe_logo.svg.png',
+  gazzetta:      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Gazzetta_dello_Sport_copertina.jpg/300px-Gazzetta_dello_Sport_copertina.jpg',
+  bbcsport:      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/BBC_Sport_2022.svg/400px-BBC_Sport_2022.svg.png',
+  goal:          'https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Goal.com_logo.svg/400px-Goal.com_logo.svg.png',
+  beinsports:    'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/BeIN_Sports_logo.svg/400px-BeIN_Sports_logo.svg.png',
+  onefootball:   'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/OneFootball_logo.svg/400px-OneFootball_logo.svg.png',
+  athletic:      'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/The_Athletic_Logo.svg/400px-The_Athletic_Logo.svg.png',
+  bild:          'https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/Bild_logo.svg/400px-Bild_logo.svg.png',
+  sport:         'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/Diari_Sport_logo.svg/400px-Diari_Sport_logo.svg.png',
+  mundodeportivo:'https://upload.wikimedia.org/wikipedia/commons/thumb/4/46/Mundo_Deportivo_logo.svg/400px-Mundo_Deportivo_logo.svg.png',
+  tuttosport:    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Tuttosport_logo.svg/400px-Tuttosport_logo.svg.png',
+  kicker:        'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f4/Kicker_Sportmagazin_Logo.svg/400px-Kicker_Sportmagazin_Logo.svg.png',
+  rmcsport:      'https://upload.wikimedia.org/wikipedia/commons/thumb/3/37/RMC_Sport_logo.svg/400px-RMC_Sport_logo.svg.png',
+  guardian:      'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/The_Guardian.svg/400px-The_Guardian.svg.png',
+  corriere:      'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Gazzetta_dello_Sport_Logo.svg/400px-Gazzetta_dello_Sport_Logo.svg.png',
+  transfermarkt: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Transfermarkt_logo.svg/400px-Transfermarkt_logo.svg.png',
+  espn:          'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2f/ESPN_wordmark.svg/400px-ESPN_wordmark.svg.png',
 };
 
-let _coversLoaded = false;
-const _coverCache = {};
-
-async function loadAllCovers(){
-  if(_coversLoaded) return;
-  try{
-    const r = await fetch(`${WORKER_URL}/covers`);
-    const d = await r.json();
-    if(d.covers){
-      // map كل صحيفة على صورتها
-      Object.entries(FRONTPAGES).forEach(([k, fp])=>{
-        // ابحث عن الصورة بالاسم
-        const found = Object.entries(d.covers).find(([alt])=>
-          alt.includes(fp.alt) || fp.alt.includes(alt)
-        );
-        if(found) _coverCache[k] = found[1];
-      });
-      // حدّث كل الصور في الصفحة
-      Object.entries(_coverCache).forEach(([k, src])=>{
-        const img = document.getElementById('nc-'+k);
-        if(img && src) img.src = src;
-      });
-    }
-  }catch(e){}
-  _coversLoaded = true;
-}
-
 function kioskoCover(k){
-  const meta = NEWS_META[k] || {};
-  // جلب الأغلفة عند أول استدعاء
-  if(!_coversLoaded) setTimeout(loadAllCovers, 200);
-  return meta.img || '';
+  return NEWSPAPER_COVERS[k] || (NEWS_META[k]||{}).img || '';
 }
 
 function newsCard(k, i){
   const d=DATA[k]; if(!d) return '';
   const site=getSite(k); const ar=isArabicKey(k);
   const meta = NEWS_META[k] || {country:'', color:'#1a1c20', img:''};
-  const cover = kioskoCover(k);
-  const fallback = meta.img || '';
+  const logo = kioskoCover(k);
+  const bg = meta.img || '';
   const openAction = `window.open('${site}','_blank')`;
 
-  return `<div class="lift cursor-pointer fade-up" style="animation-delay:${Math.min(i*35,400)}ms;border-radius:16px;overflow:hidden;background:#0a0a0b;border:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,0.5)" onclick="${openAction}">
-    <div style="position:relative;aspect-ratio:3/4;overflow:hidden;background:#1a1c20">
-      <img id="nc-${k}"
-        src="${cover}"
-        style="width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s"
-        onerror="this.src='${fallback}';this.style.objectFit='cover'"
-        loading="lazy"
-        onmouseover="this.style.transform='scale(1.05)'"
-        onmouseout="this.style.transform='scale(1)'"
-      />
-      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.9) 0%,rgba(0,0,0,0.1) 50%,transparent 100%)"></div>
-      <div style="position:absolute;bottom:0;right:0;left:0;padding:10px 12px">
-        <div style="font-family:'Changa',sans-serif;font-size:15px;font-weight:800;color:#fff;line-height:1.2;text-shadow:0 1px 4px rgba(0,0,0,0.8)">${esc(d.name)}</div>
-        <div style="font-size:11px;color:rgba(255,255,255,0.55);margin-top:2px">${meta.country} ${FLAGS[k]||''}</div>
+  return `<div class="lift cursor-pointer fade-up" style="animation-delay:${Math.min(i*35,400)}ms;border-radius:16px;overflow:hidden;background:#121316;border:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;box-shadow:0 4px 20px rgba(0,0,0,0.5)" onclick="${openAction}">
+    <div style="position:relative;aspect-ratio:3/4;overflow:hidden;background:${meta.color}22">
+      <!-- خلفية ملونة -->
+      <div style="position:absolute;inset:0;background:linear-gradient(135deg,${meta.color}ff 0%,${meta.color}99 100%)"></div>
+      <!-- نمط هندسي -->
+      <div style="position:absolute;inset:0;background:repeating-linear-gradient(45deg,rgba(255,255,255,0.04) 0,rgba(255,255,255,0.04) 1px,transparent 0,transparent 50%);background-size:20px 20px"></div>
+      <!-- شعار الصحيفة -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:20px">
+        <img src="${logo}"
+          style="max-width:80%;max-height:60%;object-fit:contain;filter:brightness(0) invert(1);drop-shadow(0 4px 12px rgba(0,0,0,0.5));opacity:0.95"
+          onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+        />
+        <div style="display:none;font-family:'Changa',sans-serif;font-size:28px;font-weight:900;color:#fff;text-align:center;text-shadow:0 2px 12px rgba(0,0,0,0.5)">${esc(d.name)}</div>
       </div>
-      <div style="position:absolute;top:8px;left:8px;backdrop-filter:blur(6px);border-radius:6px;padding:2px 8px;font-size:9px;font-weight:700;${ar
-        ? 'background:rgba(212,175,55,0.8);color:#000'
-        : 'background:rgba(255,34,68,0.8);color:#fff'}">
+      <!-- gradient سفلي -->
+      <div style="position:absolute;bottom:0;right:0;left:0;height:60%;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,transparent 100%)"></div>
+      <!-- اسم + بلد -->
+      <div style="position:absolute;bottom:0;right:0;left:0;padding:12px">
+        <div style="font-family:'Changa',sans-serif;font-size:16px;font-weight:800;color:#fff;line-height:1.2">${esc(d.name)}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.6);margin-top:3px">${meta.country} ${FLAGS[k]||''}</div>
+      </div>
+      <!-- badge -->
+      <div style="position:absolute;top:10px;left:10px;backdrop-filter:blur(8px);background:rgba(0,0,0,0.5);border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,0.2)">
         ${ar ? '🇸🇦 عربي' : '🌐 ترجم'}
       </div>
     </div>
