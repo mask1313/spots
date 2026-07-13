@@ -744,7 +744,7 @@ const NEWS_META = {
   nujoomfc:      {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1551958219-acbc6c25fcd1?w=400&q=80'},
 };
 
-/* معرّفات kiosko.net لكل صحيفة */
+/* صور أغلفة حقيقية ثابتة لكل صحيفة */
 const KIOSKO_IDS = {
   marca:         {cc:'es', id:'marca'},
   as:            {cc:'es', id:'as'},
@@ -761,36 +761,40 @@ const KIOSKO_IDS = {
   skysports:     {cc:'gb', id:'sky_sports'},
   espn:          {cc:'us', id:'espn'},
 };
-
-const _kioskoCoverCache = {};
-let _kioskoCoverLoading = false;
-
-async function loadKioskoCovers(){
-  if(_kioskoCoverLoading) return;
-  _kioskoCoverLoading = true;
-  // جلب كل الأغلفة بالتوازي
-  await Promise.allSettled(
-    Object.entries(KIOSKO_IDS).map(async ([k, {cc, id}])=>{
-      try{
-        const r = await fetch(`${WORKER_URL}/kiosko?cc=${cc}&id=${id}`);
-        const d = await r.json();
-        if(d.img){
-          _kioskoCoverCache[k] = d.img;
-          const img = document.getElementById('nc-'+k);
-          if(img){
-            img.src = d.img;
-            img.style.objectFit = 'cover';
-            img.style.filter = 'none';
-          }
-        }
-      }catch(e){}
-    })
-  );
-}
+  marca:         'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Marca_-_portada.jpg/400px-Marca_-_portada.jpg',
+  as:            'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/AS_-_portada.jpg/400px-AS_-_portada.jpg',
+  lequipe:       'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/L%27%C3%89quipe_-_portada.jpg/400px-L%27%C3%89quipe_-_portada.jpg',
+  gazzetta:      'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Gazzetta_dello_Sport_2009.jpg/400px-Gazzetta_dello_Sport_2009.jpg',
+  bild:          'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Bild_2007-03-08.jpg/400px-Bild_2007-03-08.jpg',
+  tuttosport:    'https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Tuttosport.jpg/400px-Tuttosport.jpg',
+  guardian:      'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/The_Guardian_2018_cover.jpg/400px-The_Guardian_2018_cover.jpg',
+};
 
 function kioskoCover(k){
-  setTimeout(()=>{ if(!_kioskoCoverLoading) loadKioskoCovers(); }, 300);
-  return NEWSPAPER_COVERS[k] || (NEWS_META[k]||{}).img || '';
+  // جرّب kiosko أولاً في الخلفية
+  setTimeout(()=>tryKiosko(k), 500 + Math.random()*2000);
+  return (NEWS_META[k]||{}).img || '';
+}
+
+async function tryKiosko(k){
+  const km = KIOSKO_IDS[k]; if(!km) return;
+  try{
+    const r = await fetch(`${WORKER_URL}/kiosko?cc=${km.cc}&id=${km.id}`);
+    const d = await r.json();
+    if(d.img){
+      const img = document.getElementById('nc-'+k);
+      if(img){
+        const testImg = new Image();
+        testImg.onload = ()=>{
+          img.src = d.img;
+          img.style.cssText = 'width:100%;height:100%;object-fit:cover;display:block;filter:none;max-width:none;max-height:none;opacity:1';
+          // أخفِ الخلفية الملونة
+          img.closest('[style*="aspect-ratio"]').querySelector('[style*="linear-gradient(135deg"]').style.opacity='0';
+        };
+        testImg.src = d.img;
+      }
+    }
+  }catch(e){}
 }
 
 function newsCard(k, i){
