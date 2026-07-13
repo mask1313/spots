@@ -310,6 +310,7 @@ const ICONS = {
 // تبويب المباريات محذوف
 const PAGES = [
   {id:'home',    ar:'الرئيسية',    icon:'fa-house'},
+  {id:'akhbar',  ar:'أخبار',       icon:'fa-bolt'},
   {id:'news',    ar:'الصحف',       icon:'fa-newspaper'},
   {id:'saudi',   ar:'دوري روشن',   icon:'fa-shield-halved'},
   {id:'world',   ar:'أندية العالم',icon:'fa-earth-americas'},
@@ -522,7 +523,111 @@ async function translateText(text, fromLang){
 
 let _akhbarItems = [], _akhbarFilter = 'all', _akhbarLoaded = false;
 
-const NEWSAPI_KEY = '6ac2a2bc29374c0f98dc82b524cb303d';
+const NEWS_API = 'https://soft-dust-ccec.majed132010-74a.workers.dev/news';
+let _akhbarItems = [], _akhbarFilter = 'all', _akhbarLoaded = false;
+
+async function renderAkhbar(){
+  const sec = el('page-akhbar');
+  if(_akhbarLoaded){ _renderAkhbarList(); return; }
+
+  sec.innerHTML = `
+    ${sectionTitle('أخبار كرة القدم','مجمّعة من أبرز المصادر العالمية والعربية')}
+    <div id="akhbar-filters" class="flex gap-2 flex-wrap mb-5">
+      <button onclick="filterAkhbar('all')"   id="af-all"   class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:#FF2244;color:#fff;border:none;cursor:pointer">الكل</button>
+      <button onclick="filterAkhbar('saudi')" id="af-saudi" class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);cursor:pointer">🇸🇦 سعودي</button>
+      <button onclick="filterAkhbar('euro')"  id="af-euro"  class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);cursor:pointer">🌍 أوروبي</button>
+      <button onclick="filterAkhbar('world')" id="af-world" class="af-btn px-3 py-1.5 rounded-lg text-sm font-bold" style="background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.6);border:1px solid rgba(255,255,255,0.1);cursor:pointer">💰 انتقالات</button>
+    </div>
+    <div id="akhbar-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <div id="akhbar-loading" style="display:flex;flex-direction:column;align-items:center;gap:12px;padding:60px 0;color:rgba(255,255,255,0.4)">
+      <i class="fa-solid fa-futbol fa-spin" style="font-size:28px;color:#FF2244"></i>
+      <span style="font-size:14px">جاري تحميل الأخبار...</span>
+    </div>`;
+
+  // cache 15 دقيقة
+  try{
+    const cached = JSON.parse(localStorage.getItem('uh_akhbar')||'null');
+    if(cached && Date.now()-cached.t < 900000){
+      _akhbarItems = cached.d;
+      _akhbarLoaded = true;
+      el('akhbar-loading').style.display='none';
+      _renderAkhbarList();
+      return;
+    }
+  }catch(e){}
+
+  try{
+    const r = await fetch(NEWS_API);
+    const d = await r.json();
+    _akhbarItems = d.items || [];
+    try{ localStorage.setItem('uh_akhbar', JSON.stringify({t:Date.now(), d:_akhbarItems})); }catch(e){}
+  }catch(e){
+    _akhbarItems = [];
+  }
+
+  _akhbarLoaded = true;
+  el('akhbar-loading').style.display='none';
+  _renderAkhbarList();
+}
+
+function filterAkhbar(cat){
+  _akhbarFilter = cat;
+  document.querySelectorAll('.af-btn').forEach(b=>{
+    b.style.background='rgba(255,255,255,0.05)';
+    b.style.color='rgba(255,255,255,0.6)';
+    b.style.border='1px solid rgba(255,255,255,0.1)';
+  });
+  const active = el('af-'+cat);
+  if(active){ active.style.background='#FF2244'; active.style.color='#fff'; active.style.border='none'; }
+  _renderAkhbarList();
+}
+
+function _renderAkhbarList(){
+  const list = el('akhbar-list'); if(!list) return;
+  let filtered = _akhbarItems;
+  if(_akhbarFilter==='saudi') filtered = _akhbarItems.filter(it=>it.cat==='saudi');
+  else if(_akhbarFilter==='euro')  filtered = _akhbarItems.filter(it=>it.cat==='euro');
+  else if(_akhbarFilter==='world') filtered = _akhbarItems.filter(it=>it.cat==='world');
+  if(!filtered.length){ list.innerHTML='<p style="color:rgba(255,255,255,0.3);text-align:center;padding:40px">لا توجد أخبار</p>'; return; }
+
+  list.innerHTML = filtered.map((it,i)=>{
+    const globalIdx = _akhbarItems.indexOf(it);
+    const img = it.img ? `<div style="height:150px;overflow:hidden;border-radius:10px 10px 0 0"><img src="${esc(it.img)}" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display='none'" loading="lazy"/></div>` : '';
+    return `
+    <div class="lift fade-up" style="animation-delay:${Math.min(i*30,400)}ms;background:#121316;border:1px solid rgba(255,255,255,0.08);border-radius:12px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column" onclick="openAkhbarArticle(${globalIdx})">
+      ${img}
+      <div style="padding:12px;flex:1;display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;font-weight:700;color:#FF2244;background:rgba(255,34,68,0.1);border:1px solid rgba(255,34,68,0.2);border-radius:4px;padding:1px 6px">${it.flag||'⚽'} ${esc(it.source||'')}</span>
+        </div>
+        <div style="font-family:'Changa',sans-serif;font-size:14px;font-weight:700;color:#fff;line-height:1.4">${esc(it.title||'')}</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.45);line-height:1.6">${esc((it.desc||'').slice(0,120))}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openAkhbarArticle(i){
+  const item = _akhbarItems[i]; if(!item) return;
+  const overlay = document.createElement('div');
+  overlay.id = 'article-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;z-index:9600;background:#0a0a0b;display:flex;flex-direction:column;font-family:Tajawal,sans-serif;overflow-y:auto';
+  overlay.innerHTML = `
+    <div style="position:sticky;top:0;display:flex;align-items:center;gap:8px;padding:10px 14px;background:#0a0a0b;border-bottom:1px solid rgba(255,255,255,0.08);z-index:1">
+      <button onclick="document.getElementById('article-overlay').remove()" style="background:rgba(255,34,68,0.15);border:1px solid rgba(255,34,68,0.3);color:#FF2244;width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0">✕</button>
+      <span style="font-size:12px;font-weight:700;color:#FF2244;flex:1">${item.flag||'⚽'} ${esc(item.source||'')}</span>
+      <a href="${esc(item.link)}" target="_blank" style="background:rgba(255,193,7,0.1);border:1px solid rgba(255,193,7,0.3);color:#FFC107;padding:0 12px;height:36px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;text-decoration:none">↗ المصدر</a>
+    </div>
+    ${item.img?`<img src="${esc(item.img)}" style="width:100%;max-height:220px;object-fit:cover" onerror="this.style.display='none'"/>`:''}
+    <div style="padding:20px;max-width:720px;margin:0 auto;width:100%;box-sizing:border-box">
+      <h2 style="font-family:Changa,sans-serif;font-size:20px;font-weight:800;color:#fff;line-height:1.4;margin-bottom:14px">${esc(item.title||'')}</h2>
+      <p style="font-size:15px;color:rgba(255,255,255,0.65);line-height:1.9">${esc(item.desc||'')}</p>
+      <div style="margin-top:24px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.08);text-align:center">
+        <a href="${esc(item.link)}" target="_blank" style="color:rgba(255,255,255,0.4);font-size:12px;text-decoration:none">اقرأ المقال الكامل في المصدر الأصلي ↗</a>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+}
 
 async function _fetchNewsFromClaude(){
   const results = await Promise.allSettled([
