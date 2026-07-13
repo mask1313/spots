@@ -709,18 +709,70 @@ function sectionTitle(main, sub){
     ${sub?`<p class="text-white/40 text-sm mt-1 pr-5">${sub}</p>`:''}</div></div>`;
 }
 
+/* بيانات الصحف: لون + بلد + صورة ثابتة */
+const NEWS_META = {
+  skysports:     {country:'UK',       color:'#0057A8', img:'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&q=80'},
+  marca:         {country:'إسبانيا',  color:'#C8102E', img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=400&q=80'},
+  as:            {country:'إسبانيا',  color:'#C8102E', img:'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&q=80'},
+  lequipe:       {country:'فرنسا',    color:'#FFCC00', img:'https://images.unsplash.com/photo-1602674882268-c1fcc3c0c2f4?w=400&q=80'},
+  gazzetta:      {country:'إيطاليا',  color:'#E4041B', img:'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&q=80'},
+  bbcsport:      {country:'UK',       color:'#BB1919', img:'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=80'},
+  goal:          {country:'عالمي',    color:'#1A7D3A', img:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&q=80'},
+  beinsports:    {country:'قطر',      color:'#6B1B8B', img:'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=400&q=80'},
+  onefootball:   {country:'ألمانيا',  color:'#222',    img:'https://images.unsplash.com/photo-1545987796-200677ee1011?w=400&q=80'},
+  athletic:      {country:'USA/UK',   color:'#1A1A2E', img:'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80'},
+  bild:          {country:'ألمانيا',  color:'#E4041B', img:'https://images.unsplash.com/photo-1529900748604-07564a03e7a6?w=400&q=80'},
+  sport:         {country:'إسبانيا',  color:'#003087', img:'https://images.unsplash.com/photo-1556056504-5c7696c4c28d?w=400&q=80'},
+  mundodeportivo:{country:'إسبانيا',  color:'#003087', img:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=400&q=80'},
+  tuttosport:    {country:'إيطاليا',  color:'#C8A800', img:'https://images.unsplash.com/photo-1551958219-acbc6c25fcd1?w=400&q=80'},
+  kicker:        {country:'ألمانيا',  color:'#E4041B', img:'https://images.unsplash.com/photo-1540747913346-19212a4b32a4?w=400&q=80'},
+  rmcsport:      {country:'فرنسا',    color:'#003087', img:'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?w=400&q=80'},
+  guardian:      {country:'UK',       color:'#052962', img:'https://images.unsplash.com/photo-1575361204480-aadea25e6e68?w=400&q=80'},
+  corriere:      {country:'إيطاليا',  color:'#B22222', img:'https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=400&q=80'},
+  transfermarkt: {country:'ألمانيا',  color:'#00825A', img:'https://images.unsplash.com/photo-1607457561901-e6ec3a6d16cf?w=400&q=80'},
+  espn:          {country:'USA',      color:'#CC0000', img:'https://images.unsplash.com/photo-1566577739112-5180d4bf9390?w=400&q=80'},
+  arriyadiyah:   {country:'السعودية', color:'#006400', img:'https://images.unsplash.com/photo-1624526267942-ab0ff8a3e972?w=400&q=80'},
+  kooora:        {country:'السعودية', color:'#1A6B1A', img:'https://images.unsplash.com/photo-1553778263-73a83bab9b0c?w=400&q=80'},
+  filgoal:       {country:'مصر',      color:'#CC0000', img:'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=400&q=80'},
+  sabq:          {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?w=400&q=80'},
+  okaz:          {country:'السعودية', color:'#CC0000', img:'https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=400&q=80'},
+  sada:          {country:'السعودية', color:'#006400', img:'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=400&q=80'},
+  alwatan:       {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1560272564-c83b66b1ad12?w=400&q=80'},
+  saudi360:      {country:'السعودية', color:'#1A6B1A', img:'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=400&q=80'},
+  almowaten:     {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=400&q=80'},
+  riyadhi:       {country:'السعودية', color:'#006400', img:'https://images.unsplash.com/photo-1517466787929-bc90951d0974?w=400&q=80'},
+  nujoomfc:      {country:'السعودية', color:'#003087', img:'https://images.unsplash.com/photo-1551958219-acbc6c25fcd1?w=400&q=80'},
+};
+
 function newsCard(k, i){
   const d=DATA[k]; if(!d) return '';
   const site=getSite(k); const ar=isArabicKey(k);
-  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="${ar ? `window.open('${site}','_blank')` : `openBrowserTranslated('${site}')`}">
-    <div class="flex items-center justify-between gap-2">
-      <img src="${fav(site)}" onerror="this.style.display='none'" class="w-9 h-9 rounded-md bg-white/5 p-1" alt=""/>
-      <span class="text-xs text-white/40 font-bold">${FLAGS[k]||'🌍'}</span>
+  const meta = NEWS_META[k] || {country:'', color:'#1a1c20', img:''};
+  const logo = fav(site);
+  const openAction = ar ? `window.open('${site}','_blank')` : `openBrowserTranslated('${site}')`;
+
+  return `<div class="lift cursor-pointer fade-up" style="animation-delay:${Math.min(i*35,400)}ms;border-radius:16px;overflow:hidden;background:#121316;border:1px solid rgba(255,255,255,0.08);display:flex;flex-direction:column" onclick="${openAction}">
+    <!-- صورة الخلفية -->
+    <div style="height:110px;position:relative;overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:url('${meta.img}');background-size:cover;background-position:center;filter:brightness(0.55)"></div>
+      <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)"></div>
+      <!-- شعار الصحيفة -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <img src="${logo}" style="max-height:44px;max-width:110px;object-fit:contain;filter:brightness(0) invert(1) drop-shadow(0 2px 6px rgba(0,0,0,0.8));opacity:0.95" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+        <div style="display:none;font-family:'Changa',sans-serif;font-size:18px;font-weight:900;color:#fff;text-shadow:0 2px 8px rgba(0,0,0,0.8);text-align:center;padding:0 8px">${esc(d.name)}</div>
+      </div>
+      <!-- علامة البلد -->
+      <div style="position:absolute;top:8px;left:8px;background:rgba(0,0,0,0.6);border-radius:6px;padding:2px 7px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.85)">${meta.country}</div>
     </div>
-    <div class="font-changa font-bold text-lg mt-3 leading-tight">${esc(d.name)}</div>
-    ${ar
-      ? '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-gold font-bold"><i class="fa-solid fa-check"></i> مصدر عربي</span>'
-      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-language"></i> يفتح مترجماً للعربية</span>'}
+    <!-- اسم الصحيفة -->
+    <div style="padding:8px 12px;display:flex;align-items:center;justify-content:space-between;gap:4px">
+      <div style="font-family:'Changa',sans-serif;font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(d.name)}</div>
+      <span style="flex-shrink:0;font-size:10px;font-weight:700;padding:2px 6px;border-radius:5px;${ar
+        ? 'background:rgba(255,193,7,0.15);color:#FFC107'
+        : 'background:rgba(255,34,68,0.12);color:#FF6680'}">
+        ${ar ? '🇸🇦' : '🌐'}
+      </span>
+    </div>
   </div>`;
 }
 function renderNews(){
