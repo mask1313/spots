@@ -442,12 +442,21 @@ function esc(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','
 function getSite(key){ const d=DATA[key]; if(!d)return ''; const w=(d.links||[]).find(l=>l.cls==='icon-web'); return w?w.url:''; }
 function domainOf(url){ try{ return new URL(url).hostname.replace(/^www\./,''); }catch{ return ''; } }
 const WORKER_URL = 'https://soft-dust-ccec.majed132010-74a.workers.dev';
-function tUrl(url){ return `${WORKER_URL}/fetch?url=${encodeURIComponent(url)}`; }
+function tUrl(url){
+  // نفتح عبر Google Translate مباشرة في تاب جديد
+  return 'https://translate.google.com/translate?sl=auto&tl=ar&u='+encodeURIComponent(`${WORKER_URL}/fetch?url=${encodeURIComponent(url)}`);
+}
 
 /* ============ المتصفح الداخلي ============ */
 let _browserExtUrl = '';
 function openBrowser(url, title){
+  // نفتح Worker URL مباشرة (بدون ترجمة) في تاب جديد
   window.open(url, '_blank');
+}
+
+function openBrowserTranslated(url){
+  // نفتح عبر Google Translate → Worker (مترجم)
+  window.open(tUrl(url), '_blank');
 }
 function closeBrowser(){
   document.getElementById('browserOverlay').style.display = 'none';
@@ -703,11 +712,7 @@ function sectionTitle(main, sub){
 function newsCard(k, i){
   const d=DATA[k]; if(!d) return '';
   const site=getSite(k); const ar=isArabicKey(k);
-  const openUrl = ar ? site : `${WORKER_URL}/fetch?url=${encodeURIComponent(site)}`;
-  const openAction = ar
-    ? `window.open('${site}','_blank')`
-    : `openBrowser('${openUrl}','${esc(d.name)}')`;
-  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="${openAction}">
+  return `<div class="lift bg-surface border border-white/10 rounded-xl p-4 cursor-pointer relative overflow-hidden fade-up" style="animation-delay:${Math.min(i*35,350)}ms" onclick="${ar ? `window.open('${site}','_blank')` : `openBrowserTranslated('${site}')`}">
     <div class="flex items-center justify-between gap-2">
       <img src="${fav(site)}" onerror="this.style.display='none'" class="w-9 h-9 rounded-md bg-white/5 p-1" alt=""/>
       <span class="text-xs text-white/40 font-bold">${FLAGS[k]||'🌍'}</span>
@@ -715,7 +720,7 @@ function newsCard(k, i){
     <div class="font-changa font-bold text-lg mt-3 leading-tight">${esc(d.name)}</div>
     ${ar
       ? '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-gold font-bold"><i class="fa-solid fa-check"></i> مصدر عربي</span>'
-      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-globe"></i> يفتح داخل التطبيق</span>'}
+      : '<span class="mt-2 inline-flex items-center gap-1 text-[10px] text-live font-bold"><i class="fa-solid fa-language"></i> يفتح مترجماً للعربية</span>'}
   </div>`;
 }
 function renderNews(){
@@ -840,8 +845,8 @@ function openInfo(key, type){
   const tEl=el('info-translate');
   if(site&&!ar){
     tEl.innerHTML=`
-      <button class="tbtn" onclick="closeInfo();openBrowser('${WORKER_URL}/fetch?url=${encodeURIComponent(site)}','${esc(d.name)}')"><i class="fa-solid fa-language"></i><span>فتح الموقع داخل التطبيق بدون popup</span></button>
-      <a class="tbtn" style="margin-top:8px;background:rgba(255,255,255,0.08)" href="${site}" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i><span>فتح الموقع الأصلي</span></a>`;
+      <button class="tbtn" onclick="closeInfo();openBrowserTranslated('${site}')"><i class="fa-solid fa-language"></i><span>فتح مترجماً للعربية</span></button>
+      <a class="tbtn" style="margin-top:8px;background:rgba(255,255,255,0.08)" href="${WORKER_URL}/fetch?url=${encodeURIComponent(site)}" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i><span>فتح بدون ترجمة</span></a>`;
     tEl.style.display='block';
   } else if(site&&ar){
     tEl.innerHTML=`<a class="tbtn" style="background:linear-gradient(135deg,#B38600,#FFC107)" href="${site}" target="_blank" rel="noopener"><i class="fa-solid fa-globe"></i><span>زيارة الموقع الرسمي</span></a>`;
