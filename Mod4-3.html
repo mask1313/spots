@@ -746,43 +746,53 @@ const NEWS_META = {
 
 /* معرّفات frontpages.com لكل صحيفة */
 const FRONTPAGES = {
-  marca:         'marca',
-  as:            'as',
-  lequipe:       'l-equipe',
-  gazzetta:      'la-gazzetta-dello-sport',
-  bbcsport:      'bbc-sport',
-  bild:          'bild',
-  sport:         'sport-es',
-  mundodeportivo:'mundo-deportivo',
-  tuttosport:    'tuttosport',
-  kicker:        'kicker',
-  guardian:      'the-guardian',
-  corriere:      'corriere-dello-sport',
-  skysports:     'morning-star-sport',
-  espn:          'usa-today-sports',
+  marca:         {id:'marca',              alt:'marca'},
+  as:            {id:'as',                 alt:'asmadrid'},
+  lequipe:       {id:'l-equipe',           alt:'lequipe'},
+  gazzetta:      {id:'la-gazzetta-dello-sport', alt:'lagazzettadellosport'},
+  bbcsport:      {id:'bbc-sport',          alt:'bbcsport'},
+  bild:          {id:'bild',               alt:'bild'},
+  sport:         {id:'sport-es',           alt:'sportbarcelona'},
+  mundodeportivo:{id:'mundo-deportivo',    alt:'mundodeportivo'},
+  tuttosport:    {id:'tuttosport',         alt:'tuttosport'},
+  kicker:        {id:'kicker',             alt:'kicker'},
+  guardian:      {id:'the-guardian',       alt:'theguardian'},
+  corriere:      {id:'corriere-dello-sport', alt:'corrieredellosport'},
+  skysports:     {id:'morning-star-sport', alt:'morningstar'},
+  espn:          {id:'usa-today-sports',   alt:'usatodaysports'},
 };
 
-// cache الأغلفة
+let _coversLoaded = false;
 const _coverCache = {};
 
-async function loadCover(k){
-  const fp = FRONTPAGES[k]; if(!fp) return;
-  if(_coverCache[k]) return;
+async function loadAllCovers(){
+  if(_coversLoaded) return;
   try{
-    const r = await fetch(`${WORKER_URL}/frontpage?np=${fp}`);
+    const r = await fetch(`${WORKER_URL}/covers`);
     const d = await r.json();
-    if(d.img){
-      _coverCache[k] = d.img;
-      const img = document.getElementById('nc-'+k);
-      if(img){ img.src = d.img; }
+    if(d.covers){
+      // map كل صحيفة على صورتها
+      Object.entries(FRONTPAGES).forEach(([k, fp])=>{
+        // ابحث عن الصورة بالاسم
+        const found = Object.entries(d.covers).find(([alt])=>
+          alt.includes(fp.alt) || fp.alt.includes(alt)
+        );
+        if(found) _coverCache[k] = found[1];
+      });
+      // حدّث كل الصور في الصفحة
+      Object.entries(_coverCache).forEach(([k, src])=>{
+        const img = document.getElementById('nc-'+k);
+        if(img && src) img.src = src;
+      });
     }
   }catch(e){}
+  _coversLoaded = true;
 }
 
 function kioskoCover(k){
-  // نعيد صورة Unsplash كـ fallback ثم نحدّث من Worker
   const meta = NEWS_META[k] || {};
-  setTimeout(()=>loadCover(k), 100);
+  // جلب الأغلفة عند أول استدعاء
+  if(!_coversLoaded) setTimeout(loadAllCovers, 200);
   return meta.img || '';
 }
 
