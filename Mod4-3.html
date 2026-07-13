@@ -447,11 +447,7 @@ function tUrl(url){ return `${WORKER_URL}/fetch?url=${encodeURIComponent(url)}`;
 /* ============ المتصفح الداخلي ============ */
 let _browserExtUrl = '';
 function openBrowser(url, title){
-  _browserExtUrl = url;
-  document.getElementById('browserTitle').textContent = title || url;
-  document.getElementById('browserFrame').src = url;
-  const ov = document.getElementById('browserOverlay');
-  ov.style.display = 'flex';
+  window.open(url, '_blank');
 }
 function closeBrowser(){
   document.getElementById('browserOverlay').style.display = 'none';
